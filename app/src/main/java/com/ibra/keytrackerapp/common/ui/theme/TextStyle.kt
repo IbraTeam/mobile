@@ -29,6 +29,11 @@ val medium12 = TextStyle(
     fontFamily = FontFamily(Font(R.font.inter_medium)),
     fontWeight = FontWeight(600)
 )
+val medium18 = TextStyle(
+    fontSize = 18.sp,
+    fontFamily = FontFamily(Font(R.font.inter_medium)),
+    fontWeight = FontWeight(600)
+)
 
 val light12 = TextStyle(
     fontSize = 12.sp,

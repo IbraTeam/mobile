@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.ibra.keytrackerapp.common.enums.KeyCardType
 import com.ibra.keytrackerapp.common.keytracker.data.KeyCardData
 import com.ibra.keytrackerapp.keytrack.domain.models.KeyCardDto
+import com.ibra.keytrackerapp.keytrack.domain.models.PersonDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,13 +33,6 @@ class KeyTrackerViewModel @Inject constructor(
     }
 
 
-//KeyCardDto(
-//id = "1",
-//type = KeyCardType.WAIT,
-//auditory = "A-101",
-//date = "12.12.2021",
-//time = "12:00"
-//)
 
     init {
         initViewModel()
@@ -117,7 +111,42 @@ class KeyTrackerViewModel @Inject constructor(
             )
         )
 
-        _uiState.value = KeyTrackerUiState(keyCardDtoList = keyCardDtoList)
+        val personList = mutableListOf<PersonDto>()
+
+        personList.add(PersonDto(id = "1", name = "Ivanov Ivan"))
+        personList.add(PersonDto(id = "2", name = "Petrov Petr"))
+        personList.add(PersonDto(id = "3", name = "Sidorov Sidor"))
+        personList.add(PersonDto(id = "4", name = "Ivanov Ivan"))
+        personList.add(PersonDto(id = "1", name = "Ivanov Ivan"))
+        personList.add(PersonDto(id = "2", name = "Petrov Petr"))
+        personList.add(PersonDto(id = "3", name = "Sidorov Sidor"))
+        personList.add(PersonDto(id = "4", name = "Ivanov Ivan"))
+        personList.add(PersonDto(id = "1", name = "Ivanov Ivan"))
+        personList.add(PersonDto(id = "2", name = "Petrov Petr"))
+        personList.add(PersonDto(id = "3", name = "Sidorov Sidor"))
+        personList.add(PersonDto(id = "4", name = "Ivanov Ivan"))
+        personList.add(PersonDto(id = "1", name = "Ivanov Ivan"))
+        personList.add(PersonDto(id = "2", name = "Petrov Petr"))
+        personList.add(PersonDto(id = "3", name = "Sidorov Sidor"))
+        personList.add(PersonDto(id = "4", name = "Ivanov Ivan"))
+
+        _uiState.value = KeyTrackerUiState(keyCardDtoList = keyCardDtoList, personList = personList)
+
+    }
+
+    fun onSheetDismissed() {
+        _uiState.value = _uiState.value.copy(isSheetVisible = false)
+    }
+
+    fun onSheetExpanded() {
+        _uiState.value = _uiState.value.copy(isSheetVisible = true)
+    }
+
+    fun onPersonSelected(id: String) {
+
+    }
+
+    fun onPersonNameChanged(s: String) {
 
     }
 
@@ -127,7 +156,9 @@ class KeyTrackerViewModel @Inject constructor(
 
 data class KeyTrackerUiState(
     val keyCardDtoList: List<KeyCardDto> = emptyList(),
-    val isExitButtonPressed: Boolean = false
+    val isExitButtonPressed: Boolean = false,
+    val isSheetVisible: Boolean = false,
+    val personList: List<PersonDto> = emptyList(),
+    val personName: String = ""
 ) {
-
 }
