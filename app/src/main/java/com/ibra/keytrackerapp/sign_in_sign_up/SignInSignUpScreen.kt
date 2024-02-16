@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -77,7 +78,7 @@ fun AppDescription()
         modifier = Modifier
             .fillMaxWidth()
             .padding(34.dp, 46.dp, 34.dp, 0.dp),
-        text = "Погрузись в мир отслеживания ключей",
+        text = stringResource(id = R.string.slogan),
         style = TextStyle(
             fontSize = 28.sp,
             fontWeight = FontWeight.SemiBold,
@@ -89,10 +90,9 @@ fun AppDescription()
         modifier = Modifier
             .fillMaxWidth()
             .padding(34.dp, 16.dp, 34.dp, 0.dp),
-        text = "Выберите свой способ\n авторизации для поиска ключа\n от аудитории!",
+        text = stringResource(id = R.string.choose_authorization),
         style = TextStyle(
             fontSize = 20.sp,
-           // fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
             lineHeight = 26.sp
         )
@@ -118,7 +118,7 @@ fun SignInSignUpButtons()
         onClick = { /*TODO*/ }
     ) {
         Text(
-            text = "Регистрация",
+            text = stringResource(id = R.string.registration),
             style = TextStyle(
                 textAlign = TextAlign.Center,
                 color = Color.White,
@@ -142,7 +142,7 @@ fun SignInSignUpButtons()
         onClick = {/*TODO*/}
     ){
         Text(
-            text = "Войти",
+            text = stringResource(id = R.string.log_in),
             style = TextStyle(
                 textAlign = TextAlign.Center,
                 color = Color.White,
