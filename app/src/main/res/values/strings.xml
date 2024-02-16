@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">KeyTrackerApp</string>
+    <string name="exit">Выйти</string>
+    <string name="key_track_title">Берите ключи и\nобменивайтесь ими</string>
+    <string name="your_keys">Ваши ключи</string>
+    <string name="wait_for_dekanat">Ожидает в деканате</string>
+    <string name="on_hands">На руках</string>
+    <string name="transer_key">Вы передаёте</string>
+    <string name="offer_key">Вам предлагают</string>
+    <string name="pick_up">Забрать</string>
+    <string name="transfer">Передать</string>
+    <string name="come_back">Вернуть</string>
+    <string name="accept">Принять</string>
+    <string name="reject">Отклонить</string>
+    <string name="cancel">Отменить</string>
+    <string name="create_an_application">Создать заявку</string>
+    <string name="applications">Заявки</string>
+    <string name="keys">Ключи</string>
 </resources>
