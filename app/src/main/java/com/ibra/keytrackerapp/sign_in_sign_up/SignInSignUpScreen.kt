@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.R
+import com.ibra.keytrackerapp.common.navigation.Screen
 import com.ibra.keytrackerapp.common.ui.theme.LightPink
 import com.ibra.keytrackerapp.common.ui.theme.LightPurple
 import com.ibra.keytrackerapp.common.ui.theme.Pink
@@ -43,8 +44,8 @@ fun SignInSignUpScreen(navController: NavHostController) {
         AppDescription()
         Spacer(modifier = Modifier.weight(1f))
         SignInSignUpButtons(
-            loginOnClick = { navController.navigate("login") },
-            registrationOnClick = { navController.navigate("registration") }
+            loginOnClick = { navController.navigate(Screen.Login.name) },
+            registrationOnClick = { navController.navigate(Screen.Registration.name) }
         )
     }
 }

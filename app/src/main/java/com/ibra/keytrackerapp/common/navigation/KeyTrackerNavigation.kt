@@ -14,14 +14,14 @@ fun KeyTrackerNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.SignInSignUpScreen.name
+        startDestination = Screen.Login.name
     ) {
         composable(Screen.SignInSignUpScreen.name) {
             SignInSignUpScreen(navController = navController)
         }
-        composable(Screen.KeyTracker.name) {
-            KeyTrackerScreen(navController = navController)
-        }
+//        composable(Screen.KeyTracker.name) {
+//            KeyTrackerScreen(navController = navController)
+//        }
         composable(Screen.Login.name) {
             LoginScreen(navController = navController)
         }
