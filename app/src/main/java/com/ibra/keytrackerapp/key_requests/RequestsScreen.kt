@@ -8,24 +8,24 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -116,28 +116,41 @@ fun Greeting(name: String)
 fun CurrentWeek(
     viewModel: RequestsViewModel = hiltViewModel()
 ) {
-    val vmValues = viewModel.uiState.collectAsState().value
+    val vmValues by viewModel.uiState.collectAsState()
 
     Row(
        modifier = Modifier
-           .padding(24.dp, 16.dp, 16.dp, 0.dp)
+           .padding(16.dp, 16.dp, 16.dp, 0.dp)
            .fillMaxWidth()
     ) {
         for (date in vmValues.selectedWeek){
-            DayOfWeek(date)
+            val isSelected = vmValues.selectedDate == date
 
-            if (date.plusDays(1) != vmValues.selectedDate && date != vmValues.selectedDate)
-                Spacer(modifier = Modifier.weight(1f))
-            else
-                Spacer(modifier = Modifier.weight(0.2f))
+            Row(modifier = Modifier
+                .weight(1f)
+                .clip(shape = RoundedCornerShape(16.dp))
+                .background(
+                    color = if (isSelected) LightBlueColor else Color.Transparent
+                )
+                .clickable(
+                    enabled = !isSelected,
+                    onClick = {
+                        viewModel.selectDate(date)
+                    }
+                ),
+                horizontalArrangement = Arrangement.SpaceAround
+            ){
+                DayOfWeek(date)
+            }
         }
 
         Image(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
+                .padding(4.dp, 0.dp)
                 .clip(shape = RoundedCornerShape(10.dp))
                 .clickable {
-                           //TODO
+                    //TODO
                 },
             imageVector = ImageVector.vectorResource(R.drawable.options),
             contentDescription = null
@@ -159,39 +172,30 @@ fun DayOfWeek(
 
     Column(
         modifier = Modifier
-            .clip(shape = RoundedCornerShape(16.dp))
             .background(
-                color = if (date == vmValues.selectedDate) LightBlueColor else Color.Transparent
-            )
-            .clickable(
-                enabled = !isSelected,
-                onClick = {
-                    //TODO
-                }
+                color = if (isSelected) LightBlueColor else Color.Transparent
             )
     )
     {
-        val horizontalPadding = if (isSelected) 18.dp else 0.dp
-
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(horizontalPadding, 16.dp, horizontalPadding, 0.dp),
+                .padding(0.dp, 8.dp, 0.dp, 0.dp),
             text = day.toString(),
             style = TextStyle(
                 fontSize = 22.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = if (vmValues.selectedDate == date) BlueColor else Color.Black
+                color = if (isSelected) BlueColor else Color.Black
             )
         )
 
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
-            text = viewModel.GetDayOfWeekName(date.dayOfWeek.value),
+            text = viewModel.getDayOfWeekName(date.dayOfWeek.value),
             style = TextStyle(
                 fontSize = 16.sp,
-                color = if (vmValues.selectedDate == date) BlueColor else GrayColor
+                color = if (isSelected) BlueColor else GrayColor
             )
         )
 
@@ -199,7 +203,7 @@ fun DayOfWeek(
             Image(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(0.dp, 10.dp),
+                    .padding(0.dp, 6.dp, 0.dp, 10.dp),
                 painter = painterResource(id = R.drawable.dot),
                 contentDescription = null
             )
