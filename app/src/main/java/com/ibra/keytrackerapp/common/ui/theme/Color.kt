@@ -19,3 +19,6 @@ val PinkOutlineColor = Color(0xFFFFD4D4)
 val BlueColor = Color(0xFF8572FF)
 val GrayColor = Color(0xFF94A3B8)
 val LightBlueColor = Color(0xFFF0F0FF)
+
+val GreenColor = Color(0xFF2AFF8C)
+val RedColor = Color(0xFFFF3A2D)

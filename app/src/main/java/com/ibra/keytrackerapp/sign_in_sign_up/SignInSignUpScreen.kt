@@ -27,7 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.R
+import com.ibra.keytrackerapp.common.navigation.Screen
 import com.ibra.keytrackerapp.common.ui.theme.LightPink
 import com.ibra.keytrackerapp.common.ui.theme.LightPurple
 import com.ibra.keytrackerapp.common.ui.theme.Pink
@@ -35,22 +37,23 @@ import com.ibra.keytrackerapp.common.ui.theme.Purple
 
 // Экран вабора регистрации или авторизации
 @Composable
-fun SignInSignUpScreen()
-{
+fun SignInSignUpScreen(navController: NavHostController) {
     // Картинка сверху экрана
-    Column{
+    Column {
         IntroductionImage()
         AppDescription()
         Spacer(modifier = Modifier.weight(1f))
-        SignInSignUpButtons()
+        SignInSignUpButtons(
+            loginOnClick = { navController.navigate(Screen.Login.name) },
+            registrationOnClick = { navController.navigate(Screen.Registration.name) }
+        )
     }
 }
 
 // Приветствующая картинка
 @Composable
-fun IntroductionImage()
-{
-    Box{
+fun IntroductionImage() {
+    Box {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.corner_circles),
             contentDescription = null,
@@ -72,8 +75,7 @@ fun IntroductionImage()
 
 // Описание приложения
 @Composable
-fun AppDescription()
-{
+fun AppDescription() {
     Text(
         modifier = Modifier
             .fillMaxWidth()
@@ -101,8 +103,10 @@ fun AppDescription()
 
 // Кнопки выбора регистрации или авторизации
 @Composable
-fun SignInSignUpButtons()
-{
+fun SignInSignUpButtons(
+    loginOnClick: () -> Unit,
+    registrationOnClick: () -> Unit
+) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
@@ -115,7 +119,7 @@ fun SignInSignUpButtons()
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent
         ),
-        onClick = { /*TODO*/ }
+        onClick = { registrationOnClick() }
     ) {
         Text(
             text = stringResource(id = R.string.registration),
@@ -139,8 +143,8 @@ fun SignInSignUpButtons()
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent
         ),
-        onClick = {/*TODO*/}
-    ){
+        onClick = { loginOnClick() }
+    ) {
         Text(
             text = stringResource(id = R.string.log_in),
             style = TextStyle(

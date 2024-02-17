@@ -1,6 +1,8 @@
 package com.ibra.keytrackerapp.key_requests.presentation
 
 import androidx.lifecycle.ViewModel
+import com.ibra.keytrackerapp.key_requests.domain.model.KeyRequestDto
+import com.ibra.keytrackerapp.key_requests.domain.use_case.KeyRequestUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,32 +12,51 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RequestsViewModel @Inject constructor(
-) : ViewModel() {
+    private val keyRequestUseCase: KeyRequestUseCase
+) : ViewModel()
+{
     private val _uiState = MutableStateFlow(RequestUiState())
     val uiState: StateFlow<RequestUiState> = _uiState.asStateFlow()
 
     init {
         selectWeek()
+        generateRequests()
+    }
+
+    // Генерация списка заявок пользователя
+    private fun generateRequests() {
+        _uiState.value = _uiState.value.copy(keyRequests = keyRequestUseCase.generateRequests())
     }
 
     // Перевод номера дня недели в его название
     fun getDayOfWeekName(dayOfWeek: Int) : String {
-        return when (dayOfWeek) {
-            1 -> "Пн"
-            2 -> "Вт"
-            3 -> "Ср"
-            4 -> "Чт"
-            5 -> "Пт"
-            6 -> "Сб"
-            7 -> "Вс"
-            else -> ""
-        }
+        return keyRequestUseCase.getDayOfWeekName(dayOfWeek)
+    }
+
+    // Получение времени начала пары
+    fun getPairStartTime(pairNum : Int) : String {
+        return keyRequestUseCase.getPairStartTime(pairNum)
+    }
+
+    // Получение времени конца пары
+    fun getPairEndTime(pairNum : Int) : String {
+        return keyRequestUseCase.getPairEndTime(pairNum)
+    }
+
+    // Получение названия пары
+    fun getPairName(keyRequestDto: KeyRequestDto) : String {
+        return keyRequestUseCase.getPairName(keyRequestDto)
     }
 
     // Выбор даты
     fun selectDate(date: LocalDate) {
         _uiState.value = _uiState.value.copy(selectedDate = date)
         selectWeek()
+    }
+
+    // Получение названия статуса заявки
+    fun getRequestStatusName(keyRequestDto: KeyRequestDto) : String {
+        return keyRequestUseCase.getRequestStatusName(keyRequestDto)
     }
 
     // Получение недели, содержащей выбранную дату
@@ -54,5 +75,6 @@ class RequestsViewModel @Inject constructor(
 // Данные о состоянии экрана
 data class RequestUiState(
     val selectedDate : LocalDate = LocalDate.now(),
-    val selectedWeek : MutableList<LocalDate> = mutableListOf()
+    val selectedWeek : MutableList<LocalDate> = mutableListOf(),
+    val keyRequests : MutableList<KeyRequestDto> = mutableListOf()
 )
