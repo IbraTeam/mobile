@@ -1,4 +1,4 @@
-package com.ibra.keytrackerapp.key_requests
+package com.ibra.keytrackerapp.key_requests.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -34,6 +34,7 @@ fun RequestsScreen()
     Column {
         Greeting(name = "Олег Алексеевич")
         CurrentWeek()
+        RequestsList()
     }
 }
 

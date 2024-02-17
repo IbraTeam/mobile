@@ -5,8 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ibra.keytrackerapp.key_requests.RequestsScreen
-import com.ibra.keytrackerapp.sign_in_sign_up.SignInSignUpScreen
+import com.ibra.keytrackerapp.key_requests.presentation.RequestsScreen
 
 //import com.ibra.keytrackerapp.keytrack.presentation.KeyTrackerScreen
 

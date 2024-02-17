@@ -1,4 +1,4 @@
-package com.ibra.keytrackerapp.key_requests
+package com.ibra.keytrackerapp.key_requests.presentation
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
