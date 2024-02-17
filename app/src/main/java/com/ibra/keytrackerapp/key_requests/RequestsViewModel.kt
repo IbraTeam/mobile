@@ -35,7 +35,6 @@ class RequestsViewModel @Inject constructor(
     // Выбор даты
     fun selectDate(date: LocalDate) {
         _uiState.value = _uiState.value.copy(selectedDate = date)
-        //_uiState.value = _uiState.value.copy(selectedWeek = mutableListOf())
         selectWeek()
     }
 
