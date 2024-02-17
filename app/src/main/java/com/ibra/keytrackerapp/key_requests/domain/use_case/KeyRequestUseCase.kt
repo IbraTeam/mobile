@@ -6,6 +6,7 @@ import com.ibra.keytrackerapp.key_requests.domain.model.RequestType
 import com.ibra.keytrackerapp.key_requests.domain.model.UserDto
 import com.ibra.keytrackerapp.key_requests.domain.model.UserRole
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class KeyRequestUseCase {
 
@@ -136,5 +137,15 @@ class KeyRequestUseCase {
             RequestStatus.Pending -> "На рассмотрении"
             RequestStatus.Accepted -> "Подтверждена"
         }
+    }
+
+    // Получение всех заявок на день
+    fun getDayRequests(date : LocalDate, keyRequestList : MutableList<KeyRequestDto>) : MutableList<KeyRequestDto> {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+        val newList = keyRequestList.toMutableList()
+        newList.removeIf { LocalDate.parse(it.dateTime, formatter) != date }
+
+        return newList
     }
 }

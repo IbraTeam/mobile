@@ -53,7 +53,7 @@ fun RequestsList(
         modifier = Modifier
             .padding(24.dp, 0.dp, 24.dp, 0.dp)
     ) {
-        for (keyRequest in vmValue.keyRequests) {
+        for (keyRequest in vmValue.dayRequests) {
             Request(keyRequest)
         }
     }
@@ -257,7 +257,6 @@ fun StatusOfRequest(
         }
     }
 }
-
 
 // Надпись "Ваши заявки"
 @Composable

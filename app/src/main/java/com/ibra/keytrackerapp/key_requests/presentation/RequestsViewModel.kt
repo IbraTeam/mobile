@@ -21,6 +21,8 @@ class RequestsViewModel @Inject constructor(
     init {
         selectWeek()
         generateRequests()
+        _uiState.value = _uiState.value.copy(
+            dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.keyRequests))
     }
 
     // Генерация списка заявок пользователя
@@ -52,6 +54,8 @@ class RequestsViewModel @Inject constructor(
     fun selectDate(date: LocalDate) {
         _uiState.value = _uiState.value.copy(selectedDate = date)
         selectWeek()
+        _uiState.value = _uiState.value.copy(
+            dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.keyRequests))
     }
 
     // Получение названия статуса заявки
@@ -76,5 +80,6 @@ class RequestsViewModel @Inject constructor(
 data class RequestUiState(
     val selectedDate : LocalDate = LocalDate.now(),
     val selectedWeek : MutableList<LocalDate> = mutableListOf(),
-    val keyRequests : MutableList<KeyRequestDto> = mutableListOf()
+    val keyRequests : MutableList<KeyRequestDto> = mutableListOf(),
+    val dayRequests : MutableList<KeyRequestDto> = mutableListOf()
 )
