@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="35dp"
+    android:height="36dp"
+    android:viewportWidth="35"
+    android:viewportHeight="36">
+
+    <path
+        android:fillColor="#8572FF"
+        android:pathData="M 17.5 0 L 17.5 0 Q 35 0 35 17.5 L 35 18.5 Q 35 36 17.5 36 L 17.5 36 Q 0 36 0 18.5 L 0 17.5 Q 0 0 17.5 0 Z" />
+    <path
+        android:fillColor="#000000"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="1.66667"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M7.83334 18C7.83334 18.3315 7.96065 18.6495 8.18726 18.8839C8.41386 19.1183
+8.72121 19.25 9.04168 19.25C9.36215 19.25 9.66949 19.1183 9.8961 18.8839C10.1227
+18.6495 10.25 18.3315 10.25 18C10.25 17.6685 10.1227 17.3505 9.8961
+17.1161C9.66949 16.8817 9.36215 16.75 9.04168 16.75C8.72121 16.75 8.41386
+16.8817 8.18726 17.1161C7.96065 17.3505 7.83334 17.6685 7.83334 18Z" />
+    <path
+        android:fillColor="#000000"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="1.66667"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M16.2917 18C16.2917 18.3315 16.419 18.6495 16.6456 18.8839C16.8722 19.1183
+17.1795 19.25 17.5 19.25C17.8205 19.25 18.1278 19.1183 18.3544 18.8839C18.581
+18.6495 18.7083 18.3315 18.7083 18C18.7083 17.6685 18.581 17.3505 18.3544
+17.1161C18.1278 16.8817 17.8205 16.75 17.5 16.75C17.1795 16.75 16.8722 16.8817
+16.6456 17.1161C16.419 17.3505 16.2917 17.6685 16.2917 18Z" />
+    <path
+        android:fillColor="#000000"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="1.66667"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M24.75 18C24.75 18.3315 24.8773 18.6495 25.1039 18.8839C25.3305 19.1183 25.6379
+19.25 25.9583 19.25C26.2788 19.25 26.5861 19.1183 26.8128 18.8839C27.0394
+18.6495 27.1667 18.3315 27.1667 18C27.1667 17.6685 27.0394 17.3505 26.8128
+17.1161C26.5861 16.8817 26.2788 16.75 25.9583 16.75C25.6379 16.75 25.3305
+16.8817 25.1039 17.1161C24.8773 17.3505 24.75 17.6685 24.75 18Z" />
+</vector>
