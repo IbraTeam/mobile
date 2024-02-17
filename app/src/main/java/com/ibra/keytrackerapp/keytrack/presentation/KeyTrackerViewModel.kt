@@ -1,21 +1,26 @@
 package com.ibra.keytrackerapp.keytrack.presentation
 
 import androidx.lifecycle.ViewModel
-import com.ibra.keytrackerapp.common.enums.KeyCardType
-import com.ibra.keytrackerapp.common.keytracker.data.KeyCardData
-import com.ibra.keytrackerapp.keytrack.domain.models.KeyCardDto
-import com.ibra.keytrackerapp.keytrack.domain.models.PersonDto
+import androidx.lifecycle.viewModelScope
+import com.ibra.keytrackerapp.common.enums.PairNumber
+import com.ibra.keytrackerapp.common.enums.TransferStatus
+import com.ibra.keytrackerapp.common.keytrack.domain.model.KeyDto
+import com.ibra.keytrackerapp.common.keytrack.domain.usecase.KeyTrackUseCases
+import com.ibra.keytrackerapp.common.keytrack.domain.model.PersonDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
-
 
 
 @HiltViewModel
 class KeyTrackerViewModel @Inject constructor(
-
+    private val keyTrackUseCases: KeyTrackUseCases
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(KeyTrackerUiState())
@@ -24,14 +29,39 @@ class KeyTrackerViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    fun onFirstButtonPressed(keyCard: KeyCardData) {
-
+    fun onFirstButtonPressed(keyCardDto: KeyDto) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val response = when (keyCardDto.transferStatus) {
+                TransferStatus.OFFERING_TO_YOU -> keyTrackUseCases.rejectKey("token", keyCardDto.id)
+                TransferStatus.IN_DEAN -> keyTrackUseCases.getKey("token", keyCardDto.id)
+                TransferStatus.TRANSFERRING -> keyTrackUseCases.cancelKey("token", keyCardDto.id)
+                else -> null
+            }
+            if (response?.isSuccessful == true) {
+                val newKeys = getKeyCardList()
+                _uiState.update { currentState ->
+                    currentState.copy(keyDtoList = newKeys)
+                }
+            }
+        }
     }
 
-    fun onSecondButtonPressed(keyCard: KeyCardData) {
+    fun onSecondButtonPressed(keyCardDto: KeyDto) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val response = when (keyCardDto.transferStatus) {
+                TransferStatus.ON_HANDS -> keyTrackUseCases.returnKey("token", keyCardDto.id)
+                TransferStatus.OFFERING_TO_YOU -> keyTrackUseCases.acceptKey("token", keyCardDto.id)
+                else -> null
+            }
+            if (response?.isSuccessful == true) {
+                val newKeys = getKeyCardList()
+                _uiState.update { currentState ->
+                    currentState.copy(keyDtoList = newKeys)
+                }
 
+            }
+        }
     }
-
 
 
     init {
@@ -39,75 +69,74 @@ class KeyTrackerViewModel @Inject constructor(
     }
 
     private fun initViewModel() {
-        // fill key card dto list with fake data
-        val keyCardDtoList = mutableListOf<KeyCardDto>()
+        val keyCardDtoList = mutableListOf<KeyDto>()
         keyCardDtoList.add(
-            KeyCardDto(
+            KeyDto(
                 id = "1",
-                type = KeyCardType.ON_HAND,
-                auditory = "A-101",
-                date = "12.12.2021",
-                time = "12:00"
+                transferStatus = TransferStatus.ON_HANDS,
+                room = "A-101",
+                dateTime = LocalDateTime.now(),
+                pairNumber = PairNumber.Fourth
             )
         )
         keyCardDtoList.add(
-            KeyCardDto(
+            KeyDto(
                 id = "2",
-                type = KeyCardType.HAVE_OFFER,
-                auditory = "A-102",
-                date = "12.12.2021",
-                time = "12:00",
-                person = "Ivanov Ivan"
+                transferStatus = TransferStatus.OFFERING_TO_YOU,
+                room = "A-102",
+                dateTime = LocalDateTime.now(),
+                pairNumber = PairNumber.Second,
+                userName = "Ivanov Ivan"
             )
         )
         keyCardDtoList.add(
-            KeyCardDto(
+            KeyDto(
                 id = "3",
-                type = KeyCardType.WAIT,
-                auditory = "A-103",
-                date = "12.12.2021",
-                time = "12:00"
+                transferStatus = TransferStatus.IN_DEAN,
+                room = "A-103",
+                dateTime = LocalDateTime.now(),
+                pairNumber = PairNumber.First
             )
         )
 
         keyCardDtoList.add(
-            KeyCardDto(
+            KeyDto(
                 id = "3",
-                type = KeyCardType.SUGGEST_OFFER,
-                auditory = "A-103",
-                date = "12.12.2021",
-                time = "12:00",
-                person = "Ivanov Ivan"
+                transferStatus = TransferStatus.TRANSFERRING,
+                room = "A-103",
+                dateTime = LocalDateTime.now(),
+                pairNumber = PairNumber.First,
+                userName = "Ivanov Ivan"
             )
         )
         keyCardDtoList.add(
-            KeyCardDto(
+            KeyDto(
                 id = "2",
-                type = KeyCardType.HAVE_OFFER,
-                auditory = "A-102",
-                date = "12.12.2021",
-                time = "12:00",
-                person = "Ivanov Ivan"
+                transferStatus = TransferStatus.OFFERING_TO_YOU,
+                room = "A-102",
+                dateTime = LocalDateTime.now(),
+                pairNumber = PairNumber.First,
+                userName = "Ivanov Ivan"
             )
         )
         keyCardDtoList.add(
-            KeyCardDto(
+            KeyDto(
                 id = "3",
-                type = KeyCardType.WAIT,
-                auditory = "A-103",
-                date = "12.12.2021",
-                time = "12:00"
+                transferStatus = TransferStatus.IN_DEAN,
+                room = "A-103",
+                dateTime = LocalDateTime.now(),
+                pairNumber = PairNumber.First
             )
         )
 
         keyCardDtoList.add(
-            KeyCardDto(
+            KeyDto(
                 id = "3",
-                type = KeyCardType.SUGGEST_OFFER,
-                auditory = "A-103",
-                date = "12.12.2021",
-                time = "12:00",
-                person = "Ivanov Ivan"
+                transferStatus = TransferStatus.TRANSFERRING,
+                room = "A-103",
+                dateTime = LocalDateTime.now(),
+                pairNumber = PairNumber.First,
+                userName = "Ivanov Ivan"
             )
         )
 
@@ -130,24 +159,52 @@ class KeyTrackerViewModel @Inject constructor(
         personList.add(PersonDto(id = "3", name = "Sidorov Sidor"))
         personList.add(PersonDto(id = "4", name = "Ivanov Ivan"))
 
-        _uiState.value = KeyTrackerUiState(keyCardDtoList = keyCardDtoList, personList = personList)
+        _uiState.value = KeyTrackerUiState(keyDtoList = keyCardDtoList, personList = personList)
 
     }
 
     fun onSheetDismissed() {
-        _uiState.value = _uiState.value.copy(isSheetVisible = false)
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { currentState ->
+                currentState.copy(isSheetVisible = false, transferKeyId = "")
+            }
+        }
     }
 
     fun onSheetExpanded() {
-        _uiState.value = _uiState.value.copy(isSheetVisible = true)
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { currentState ->
+                currentState.copy(isSheetVisible = true)
+            }
+        }
     }
 
-    fun onPersonSelected(id: String) {
-
+    fun onPersonSelected(keyId: String, userId: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val giveKeyResponse = keyTrackUseCases.giveKey("token", userId, keyId)
+            if (giveKeyResponse.isSuccessful) {
+                val keyCardList = _uiState.value.keyDtoList.filter { it.id != keyId }
+                _uiState.update { currentState ->
+                    currentState.copy(isSheetVisible = false, keyDtoList = keyCardList)
+                }
+            }
+        }
     }
 
-    fun onPersonNameChanged(s: String) {
 
+    private suspend fun getKeyCardList(): List<KeyDto> {
+        val getKeysResponse = keyTrackUseCases.getKeys("token")
+        return if (getKeysResponse.isSuccessful && getKeysResponse.body() != null)
+            getKeysResponse.body()!!.keys
+            else _uiState.value.keyDtoList
+    }
+
+    fun onPersonNameChanged(newPersonName: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { currentState ->
+                currentState.copy(personName = newPersonName)
+            }
+        }
     }
 
 
@@ -155,10 +212,10 @@ class KeyTrackerViewModel @Inject constructor(
 
 
 data class KeyTrackerUiState(
-    val keyCardDtoList: List<KeyCardDto> = emptyList(),
+    val keyDtoList: List<KeyDto> = emptyList(),
     val isExitButtonPressed: Boolean = false,
     val isSheetVisible: Boolean = false,
     val personList: List<PersonDto> = emptyList(),
-    val personName: String = ""
-) {
-}
+    val personName: String = "",
+    val transferKeyId: String = ""
+)

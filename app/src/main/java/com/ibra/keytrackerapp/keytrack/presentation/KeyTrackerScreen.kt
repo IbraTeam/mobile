@@ -16,8 +16,8 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -39,18 +39,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.R
-import com.ibra.keytrackerapp.common.enums.KeyCardType
-import com.ibra.keytrackerapp.common.keytracker.data.KeyCardButtonData
+import com.ibra.keytrackerapp.common.enums.TransferStatus
+import com.ibra.keytrackerapp.common.keytrack.data.KeyCardButtonData
 import com.ibra.keytrackerapp.common.ui.component.ExitButton
 import com.ibra.keytrackerapp.common.ui.theme.light12
 import com.ibra.keytrackerapp.common.ui.theme.semiBold16
 import com.ibra.keytrackerapp.common.ui.theme.semiBold24
-import com.ibra.keytrackerapp.keytrack.domain.models.KeyCardDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,13 +110,14 @@ fun KeyTrackerScreen(
                 verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
                 state = lazyGridState
             ) {
-                items(uiState.keyCardDtoList.size) { index ->
-                    val keyCardDto = uiState.keyCardDtoList[index]
-                    KeyCard(data = keyCardDto, firstOnClick = {
-                      if (keyCardDto.type == KeyCardType.ON_HAND) {
-                          viewModel.onSheetExpanded()
-                      }
-                    }, secondOnClick = { })
+                items(uiState.keyDtoList.size) { index ->
+                    val keyDto = uiState.keyDtoList[index]
+                    KeyCard(data = keyDto, firstOnClick = {
+                        if (keyDto.transferStatus == TransferStatus.ON_HANDS) {
+                            viewModel.onSheetExpanded()
+                        }
+                        viewModel.onFirstButtonPressed(keyDto)
+                    }, secondOnClick = { viewModel.onSecondButtonPressed(keyDto) })
                 }
             }
         }
@@ -136,13 +135,10 @@ fun KeyTrackerScreen(
                 ) {
                     items(uiState.personList.size) { index ->
                         val person = uiState.personList[index]
-                        PersonCard(
-                            text = person.name,
-                            onClick = {
-                                viewModel.onSheetDismissed()
-                                viewModel.onPersonSelected(person.id)
-                            }
-                        )
+                        PersonCard(text = person.name, onClick = {
+                            viewModel.onSheetDismissed()
+                            viewModel.onPersonSelected(person.id, uiState.transferKeyId)
+                        })
                     }
                 }
             }
@@ -169,7 +165,7 @@ fun MyTextField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text, imeAction = ImeAction.Go
             ),
-             leadingIcon = {
+            leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.search_light),
                     contentDescription = null,
@@ -206,10 +202,8 @@ fun MyTextField(
                 unfocusedSupportingTextColor = Color.White,
             ),
         )
-        Divider(
-            thickness = 1.dp,
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.White
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Color.White
         )
     }
 }
@@ -231,19 +225,19 @@ fun RowWithIcon(text: String, painter: Painter) {
 }
 
 @Composable
-fun getBackgroundColor(type: KeyCardType): Color {
+fun getBackgroundColor(type: TransferStatus): Color {
     return when (type) {
-        KeyCardType.WAIT -> colorResource(R.color.light_green)
-        KeyCardType.SUGGEST_OFFER -> colorResource(R.color.light_pink)
-        KeyCardType.HAVE_OFFER -> colorResource(R.color.light_gray)
-        KeyCardType.ON_HAND -> colorResource(R.color.light_yellow)
+        TransferStatus.IN_DEAN -> colorResource(R.color.light_green)
+        TransferStatus.TRANSFERRING -> colorResource(R.color.light_pink)
+        TransferStatus.OFFERING_TO_YOU -> colorResource(R.color.light_gray)
+        TransferStatus.ON_HANDS -> colorResource(R.color.light_yellow)
     }
 }
 
 @Composable
-fun getKeyCardData(type: KeyCardType, isFirstButton: Boolean): KeyCardButtonData? {
+fun getKeyCardData(type: TransferStatus, isFirstButton: Boolean): KeyCardButtonData? {
     return when {
-        !isFirstButton && type == KeyCardType.ON_HAND -> {
+        !isFirstButton && type == TransferStatus.ON_HANDS -> {
             KeyCardButtonData(
                 icon = getSecondIconFromType(type)!!,
                 text = getSecondButtonText(type)!!,
@@ -260,99 +254,91 @@ fun getKeyCardData(type: KeyCardType, isFirstButton: Boolean): KeyCardButtonData
         }
 
 
-
         else -> null
     }
 }
 
 @Composable
-fun getFirstButtonText(type: KeyCardType): String {
+fun getFirstButtonText(type: TransferStatus): String {
     return when (type) {
-        KeyCardType.HAVE_OFFER -> stringResource(R.string.reject)
-        KeyCardType.SUGGEST_OFFER -> stringResource(R.string.cancel)
-        KeyCardType.WAIT -> stringResource(R.string.accept)
-        KeyCardType.ON_HAND -> stringResource(R.string.transfer)
+        TransferStatus.OFFERING_TO_YOU -> stringResource(R.string.reject)
+        TransferStatus.TRANSFERRING -> stringResource(R.string.cancel)
+        TransferStatus.IN_DEAN -> stringResource(R.string.accept)
+        TransferStatus.ON_HANDS -> stringResource(R.string.transfer)
     }
 }
 
 @Composable
-fun getSecondButtonText(type: KeyCardType): String? {
+fun getSecondButtonText(type: TransferStatus): String? {
     return when (type) {
-        KeyCardType.HAVE_OFFER -> stringResource(R.string.accept)
-        KeyCardType.ON_HAND -> stringResource(R.string.come_back)
+        TransferStatus.OFFERING_TO_YOU -> stringResource(R.string.accept)
+        TransferStatus.ON_HANDS -> stringResource(R.string.come_back)
         else -> null
     }
 }
 
 
 @Composable
-fun getFirstButtonColor(type: KeyCardType): Color {
+fun getFirstButtonColor(type: TransferStatus): Color {
     return when (type) {
-        KeyCardType.WAIT -> colorResource(id = R.color.green_bright)
-        KeyCardType.ON_HAND -> colorResource(id = R.color.gray)
+        TransferStatus.IN_DEAN -> colorResource(id = R.color.green_bright)
+        TransferStatus.ON_HANDS -> colorResource(id = R.color.gray)
         else -> colorResource(id = R.color.red)
     }
 }
 
 @Composable
-fun getSecondButtonColor(type: KeyCardType): Color? {
+fun getSecondButtonColor(type: TransferStatus): Color? {
     return when (type) {
-        KeyCardType.HAVE_OFFER -> colorResource(id = R.color.gray)
-        KeyCardType.ON_HAND -> colorResource(id = R.color.yellow)
+        TransferStatus.OFFERING_TO_YOU -> colorResource(id = R.color.gray)
+        TransferStatus.ON_HANDS -> colorResource(id = R.color.yellow)
         else -> null
     }
 }
 
 
 @Composable
-fun getFirstIconFromType(type: KeyCardType): Painter {
+fun getFirstIconFromType(type: TransferStatus): Painter {
     return when (type) {
-        KeyCardType.WAIT -> painterResource(id = R.drawable.key)
-        KeyCardType.ON_HAND -> painterResource(id = R.drawable.horizontal_down_left_main)
+        TransferStatus.IN_DEAN -> painterResource(id = R.drawable.key)
+        TransferStatus.ON_HANDS -> painterResource(id = R.drawable.horizontal_down_left_main)
         else -> painterResource(id = R.drawable.close_ring)
     }
 }
 
 @Composable
-fun getSecondIconFromType(type: KeyCardType): Painter? {
+fun getSecondIconFromType(type: TransferStatus): Painter? {
     return when (type) {
-        KeyCardType.ON_HAND -> painterResource(id = R.drawable.close_ring)
-        KeyCardType.HAVE_OFFER -> painterResource(id = R.drawable.check_ring)
+        TransferStatus.ON_HANDS -> painterResource(id = R.drawable.close_ring)
+        TransferStatus.OFFERING_TO_YOU -> painterResource(id = R.drawable.check_ring)
         else -> null
     }
 }
 
 
 @Composable
-fun getPersonIconFromType(type: KeyCardType): Painter? {
+fun getPersonIconFromType(type: TransferStatus): Painter? {
     return when (type) {
-        KeyCardType.SUGGEST_OFFER -> painterResource(id = R.drawable.export)
-        KeyCardType.HAVE_OFFER -> painterResource(id = R.drawable.imports)
+        TransferStatus.TRANSFERRING -> painterResource(id = R.drawable.export)
+        TransferStatus.OFFERING_TO_YOU -> painterResource(id = R.drawable.imports)
         else -> null
     }
 }
 
 @Composable
-fun getTextFromType(type: KeyCardType): String {
+fun getTextFromType(type: TransferStatus): String {
     return stringResource(
         when (type) {
-            KeyCardType.WAIT -> R.string.wait_for_dekanat
-            KeyCardType.ON_HAND -> R.string.on_hands
-            KeyCardType.SUGGEST_OFFER -> R.string.transer_key
-            KeyCardType.HAVE_OFFER -> R.string.offer_key
+            TransferStatus.IN_DEAN -> R.string.wait_for_dekanat
+            TransferStatus.ON_HANDS -> R.string.on_hands
+            TransferStatus.TRANSFERRING -> R.string.transer_key
+            TransferStatus.OFFERING_TO_YOU -> R.string.offer_key
         }
     )
 
 }
 
 
-@Preview
-@Composable
-fun PreviewKeyCard() {
-    KeyCard(data = KeyCardDto("", KeyCardType.WAIT, "", "", ""),
-        firstOnClick = { /*TODO*/ },
-        secondOnClick = { /*TODO*/ })
-}
 
 
 

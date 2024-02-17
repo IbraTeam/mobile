@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,19 +22,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ibra.keytrackerapp.R
-import com.ibra.keytrackerapp.common.keytracker.data.KeyCardData
+import com.ibra.keytrackerapp.common.keytrack.data.KeyCardData
+import com.ibra.keytrackerapp.common.keytrack.domain.model.KeyDto
 import com.ibra.keytrackerapp.common.ui.component.CardButton
 import com.ibra.keytrackerapp.common.ui.theme.medium12
 import com.ibra.keytrackerapp.common.ui.theme.medium18
-import com.ibra.keytrackerapp.keytrack.domain.models.KeyCardDto
+import java.time.LocalDateTime
 
 
 @Composable
 fun PersonCard(text: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier.clickable { onClick() }
-    ){
-        Row (
+    ) {
+        Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -55,7 +56,7 @@ fun PersonCard(text: String, onClick: () -> Unit) {
                 color = Color.White
             )
         }
-        Divider(
+        HorizontalDivider(
             thickness = 1.dp,
             modifier = Modifier.fillMaxWidth(),
             color = Color.White
@@ -67,16 +68,16 @@ fun PersonCard(text: String, onClick: () -> Unit) {
 
 @Composable
 fun KeyCard(
-    data: KeyCardDto,
+    data: KeyDto,
     firstOnClick: () -> Unit,
     secondOnClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val keyCardData = KeyCardData(
-        backgroundColor = getBackgroundColor(data.type),
-        firstButton = getKeyCardData(data.type, true),
-        secondButton = getKeyCardData(data.type, false),
-        personIcon = getPersonIconFromType(data.type)
+        backgroundColor = getBackgroundColor(data.transferStatus),
+        firstButton = getKeyCardData(data.transferStatus, true),
+        secondButton = getKeyCardData(data.transferStatus, false),
+        personIcon = getPersonIconFromType(data.transferStatus)
     )
 
     Column(
@@ -94,18 +95,21 @@ fun KeyCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = getTextFromType(data.type),
+                text = getTextFromType(data.transferStatus),
                 style = medium12,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp)
             )
-            RowWithIcon(text = data.auditory, painter = painterResource(R.drawable.destination))
-            RowWithIcon(text = data.date, painter = painterResource(R.drawable.date_range))
-            RowWithIcon(text = data.time, painter = painterResource(R.drawable.time))
+            RowWithIcon(text = data.room, painter = painterResource(R.drawable.destination))
+            RowWithIcon(
+                text = getDateString(data.dateTime),
+                painter = painterResource(R.drawable.date_range)
+            )
+            RowWithIcon(text = data.pairNumber.text, painter = painterResource(R.drawable.time))
             if (keyCardData.personIcon != null) {
-                RowWithIcon(text = data.person ?: "", painter = keyCardData.personIcon)
+                RowWithIcon(text = data.userName ?: "", painter = keyCardData.personIcon)
             }
         }
 
@@ -121,5 +125,25 @@ fun KeyCard(
                 )
             }
         }
+    }
+}
+
+
+fun getDateString(date: LocalDateTime): String {
+    return date.dayOfMonth.toString() + " " + when (date.monthValue) {
+        1 -> "января"
+        2 -> "февраля"
+        3 -> "марта"
+        4 -> "апреля"
+        5 -> "мая"
+        6 -> "июня"
+        7 -> "июля"
+        8 -> "августа"
+        9 -> "сентября"
+        10 -> "октября"
+        11 -> "ноября"
+        12 -> "декабря"
+        else -> ""
+
     }
 }

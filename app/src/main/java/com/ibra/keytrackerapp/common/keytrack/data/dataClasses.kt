@@ -1,4 +1,4 @@
-package com.ibra.keytrackerapp.common.keytracker.data
+package com.ibra.keytrackerapp.common.keytrack.data
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
