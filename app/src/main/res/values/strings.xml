@@ -20,4 +20,12 @@
     <string name="choose_authorization">Выберите свой способ\n авторизации для поиска ключа\n от аудитории!</string>
     <string name="registration">Регистрация</string>
     <string name="log_in">Войти</string>
+    <string name="short_name">Имя слишком короткое</string>
+    <string name="short_surname">Фамилия слишком короткая</string>
+    <string name="blank_email">Поле почты не может быть пустым</string>
+    <string name="incorrect_email">Почта должна иметь следующий вид:</string>
+    <string name="blank_password">Поле пароля не может быть пустым</string>
+    <string name="incorrect_name">Имя должно быть только из букв</string>
+    <string name="incorrect_surname">Фамилия должна быть только из букв</string>
+
 </resources>
