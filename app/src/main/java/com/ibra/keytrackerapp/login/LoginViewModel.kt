@@ -105,7 +105,7 @@ class LoginViewModel @Inject constructor(
             try {
                 val user = _uiState.value.toUserLoginModel()
                 val response = loginUserUseCase.execute(user)
-                val token = response.getOrNull()?.token
+                val token = response.body()?.token
                 token?.let { tokenUseCase.setTokenToLocalStorage(it) }
                 if (token != null) {
                     val result = profileUseCase.getProfile(token)

@@ -23,7 +23,7 @@ class ProfileUseCase @Inject constructor(
                 Response.error(result.code(), result.errorBody()!!)
             }
         }catch (e: Exception){
-            Response.error(500, e.message!!.toResponseBody())
+            Response.error(500, (e.message!! + e.stackTrace + "Error").toResponseBody())
         }
     }
 
