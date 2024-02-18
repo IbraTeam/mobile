@@ -32,7 +32,7 @@ class ProfileStorageImpl @Inject constructor(
             putString(ProfilePreferences.PROFILE_ID_KEY, profile.id)
             putString(ProfilePreferences.PROFILE_EMAIL_KEY, profile.email)
             putString(ProfilePreferences.PROFILE_NAME_KEY, profile.name)
-            putString(ProfilePreferences.PROFILE_SURNAME_KEY, profile.surname)
+            putString(ProfilePreferences.PROFILE_ROLE_KEY, profile.role)
             apply()
         }
     }
@@ -40,16 +40,16 @@ class ProfileStorageImpl @Inject constructor(
     override suspend fun getProfile(): Response<Profile> {
         val id = sharedPreferences.getString(ProfilePreferences.PROFILE_ID_KEY, null)
         val name = sharedPreferences.getString(ProfilePreferences.PROFILE_NAME_KEY, null)
-        val surname = sharedPreferences.getString(ProfilePreferences.PROFILE_SURNAME_KEY, null)
+        val role = sharedPreferences.getString(ProfilePreferences.PROFILE_ROLE_KEY, null)
         val email = sharedPreferences.getString(ProfilePreferences.PROFILE_EMAIL_KEY, null)
 
-        return if ( id != null && surname != null && email != null && name != null ) {
+        return if ( id != null && role != null && email != null && name != null ) {
             Response.success(
                 Profile(
                     id = id,
                     email = email,
                     name = name,
-                    surname = surname
+                    role = role
                 )
             )
         } else {
@@ -62,7 +62,7 @@ class ProfileStorageImpl @Inject constructor(
             remove(ProfilePreferences.PROFILE_ID_KEY)
             remove(ProfilePreferences.PROFILE_EMAIL_KEY)
             remove(ProfilePreferences.PROFILE_NAME_KEY)
-            remove(ProfilePreferences.PROFILE_SURNAME_KEY)
+            remove(ProfilePreferences.PROFILE_ROLE_KEY)
             apply()
         }
     }
