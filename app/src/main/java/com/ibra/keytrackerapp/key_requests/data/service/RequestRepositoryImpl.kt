@@ -8,7 +8,7 @@ class RequestRepositoryImpl(
 ) : RequestRepository
 {
     // Получение списка всех заявок пользователя
-    override suspend fun getUserRequests(token: String): UserRequests {
-        return requestApiService.getUserRequests("Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZWhhQGxlaGEubGVoYSIsInJvbGVzIjpbIlJPTEVfVEVBQ0hFUiJdLCJleHAiOjE3MDgyNjExMDQsInVzZXJJZCI6IjFiMGY3ZDQ4LWEwNGItNDk2Yi04YjNhLThjYzNmYTBlMTUyNCIsImlhdCI6MTcwODI1NzUwNCwianRpIjoiZTcxZjEyNmMtYzlmNC00NDEyLThmZWQtOGRkMDc0MmVhNzA0In0.30ONIvT_65IK5BNPm_z6dt5ur0pOGN8_Zzb0TH6gsUo")
+    override suspend fun getUserRequests(token: String, weekStart: String): UserRequests {
+        return requestApiService.getUserRequests(token, weekStart)
     }
 }

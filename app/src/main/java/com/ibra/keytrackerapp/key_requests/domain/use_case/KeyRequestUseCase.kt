@@ -19,8 +19,11 @@ class KeyRequestUseCase @Inject constructor(
 ) {
 
     // Получение всех заявок пользователя
-    suspend fun getUserRequests() : UserRequests {
-        return requestRepository.getUserRequests("Bearer ${tokenUseCase.getTokenFromLocalStorage()}")
+    suspend fun getUserRequests(weekStart: LocalDate) : UserRequests {
+        val formatter = DateTimeFormatter.ofPattern("MM.dd.yyyy")
+        val weekStartStr = weekStart.format(formatter)
+
+        return requestRepository.getUserRequests("Bearer ${tokenUseCase.getTokenFromLocalStorage()}", weekStartStr)
     }
 
     // Генерация заявок пользователя

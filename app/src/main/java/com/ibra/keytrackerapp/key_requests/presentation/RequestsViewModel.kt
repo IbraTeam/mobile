@@ -32,10 +32,6 @@ class RequestsViewModel @Inject constructor(
     init {
         getProfile()
         selectDate(LocalDate.now())
-
-        viewModelScope.launch(Dispatchers.Default) {
-            _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests())
-        }
     }
 
     // Полученине профиля пользователя
@@ -82,6 +78,10 @@ class RequestsViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.userRequests!!.requests)
             )
+
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
+        }
     }
 
     // Получение названия статуса заявки
