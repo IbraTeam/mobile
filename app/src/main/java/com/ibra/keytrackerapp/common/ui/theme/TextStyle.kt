@@ -15,6 +15,12 @@ val semiBold24 = TextStyle(
     fontWeight = FontWeight(700),
     textAlign = TextAlign.Center
 )
+val bold24 = TextStyle(
+    fontSize = 24.sp,
+    fontFamily = FontFamily(Font(R.font.inter_bold)),
+    fontWeight = FontWeight(700),
+    textAlign = TextAlign.Center
+)
 
 val semiBold16 = TextStyle(
     fontSize = 16.sp,
@@ -22,7 +28,11 @@ val semiBold16 = TextStyle(
     fontWeight = FontWeight(400),
     textAlign = TextAlign.Center
 )
-
+val medium18 = TextStyle(
+    fontSize = 18.sp,
+    fontFamily = FontFamily(Font(R.font.inter_medium)),
+    fontWeight = FontWeight(600)
+)
 
 val medium12 = TextStyle(
     fontSize = 12.sp,
