@@ -40,12 +40,19 @@ import kotlinx.coroutines.launch
 
 // Экран заявок пользователя
 @Composable
-fun RequestsScreen(navController: NavHostController)
-{
-    Column {
-        Greeting(navController)
-        CurrentWeek()
-        RequestsList()
+fun RequestsScreen(
+    navController: NavHostController,
+    viewModel: RequestsViewModel = hiltViewModel()
+) {
+    viewModel.getProfile()
+    val vmValues by viewModel.uiState.collectAsState()
+
+    if (vmValues.profile != null){
+        Column {
+            Greeting(navController)
+            CurrentWeek()
+            RequestsList()
+        }
     }
 }
 

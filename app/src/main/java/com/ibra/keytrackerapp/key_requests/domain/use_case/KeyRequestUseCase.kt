@@ -1,14 +1,27 @@
 package com.ibra.keytrackerapp.key_requests.domain.use_case
 
+import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
+import com.ibra.keytrackerapp.key_requests.domain.enums.PairNumber
 import com.ibra.keytrackerapp.key_requests.domain.model.KeyRequestDto
-import com.ibra.keytrackerapp.key_requests.domain.model.RequestStatus
-import com.ibra.keytrackerapp.key_requests.domain.model.RequestType
+import com.ibra.keytrackerapp.key_requests.domain.enums.RequestStatus
+import com.ibra.keytrackerapp.key_requests.domain.enums.RequestType
 import com.ibra.keytrackerapp.key_requests.domain.model.UserDto
-import com.ibra.keytrackerapp.key_requests.domain.model.UserRole
+import com.ibra.keytrackerapp.key_requests.domain.enums.UserRole
+import com.ibra.keytrackerapp.key_requests.domain.model.UserRequests
+import com.ibra.keytrackerapp.key_requests.domain.repository.RequestRepository
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class KeyRequestUseCase() {
+class KeyRequestUseCase @Inject constructor(
+    private val requestRepository: RequestRepository,
+    private val tokenUseCase: TokenUseCase
+) {
+
+    // Получение всех заявок пользователя
+    suspend fun getUserRequests() : UserRequests {
+        return requestRepository.getUserRequests("Bearer ${tokenUseCase.getTokenFromLocalStorage()}")
+    }
 
     // Генерация заявок пользователя
     fun generateRequests() : MutableList<KeyRequestDto> {
@@ -24,13 +37,13 @@ class KeyRequestUseCase() {
                 dayNumb = 3,
                 repeated = false,
                 typeBooking = RequestType.Booking,
-                pairNumber = 0,
+                pairNumber = PairNumber.First,
                 keyId = "1",
                 user = UserDto(
                     id = "1",
                     name = "Змеев Олег Алексеевич",
                     email = "oleg@alekseevich.com",
-                    role = UserRole.Teacher
+                    role = UserRole.TEACHER
                 )
             )
         )
@@ -45,13 +58,13 @@ class KeyRequestUseCase() {
                 dayNumb = 3,
                 repeated = false,
                 typeBooking = RequestType.Pair,
-                pairNumber = 1,
+                pairNumber = PairNumber.Second,
                 keyId = "2",
                 user = UserDto(
                     id = "1",
                     name = "Змеев Олег Алексеевич",
                     email = "oleg@alekseevich.com",
-                    role = UserRole.Teacher
+                    role = UserRole.TEACHER
                 )
             )
         )
@@ -66,13 +79,13 @@ class KeyRequestUseCase() {
                 dayNumb = 3,
                 repeated = false,
                 typeBooking = RequestType.Booking,
-                pairNumber = 3,
+                pairNumber = PairNumber.Fourth,
                 keyId = "3",
                 user = UserDto(
                     id = "1",
                     name = "Змеев Олег Алексеевич",
                     email = "oleg@alekseevich.com",
-                    role = UserRole.Teacher
+                    role = UserRole.TEACHER
                 )
             )
         )
@@ -140,11 +153,11 @@ class KeyRequestUseCase() {
     }
 
     // Получение всех заявок на день
-    fun getDayRequests(date : LocalDate, keyRequestList : MutableList<KeyRequestDto>) : MutableList<KeyRequestDto> {
+    fun getDayRequests(date : LocalDate, keyRequestList : List<KeyRequestDto>) : MutableList<KeyRequestDto> {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         val newList = keyRequestList.toMutableList()
-        newList.removeIf { LocalDate.parse(it.dateTime, formatter) != date }
+        newList.removeIf { LocalDate.parse(it.dateTime.slice(0..9), formatter) != date }
 
         return newList
     }

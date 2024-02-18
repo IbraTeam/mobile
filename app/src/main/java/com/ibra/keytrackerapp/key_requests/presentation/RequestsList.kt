@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,9 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -37,8 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.BaselineShift
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,8 +43,8 @@ import com.ibra.keytrackerapp.common.ui.theme.GrayColor
 import com.ibra.keytrackerapp.common.ui.theme.GreenColor
 import com.ibra.keytrackerapp.common.ui.theme.RedColor
 import com.ibra.keytrackerapp.key_requests.domain.model.KeyRequestDto
-import com.ibra.keytrackerapp.key_requests.domain.model.RequestStatus
-import com.ibra.keytrackerapp.key_requests.domain.model.RequestType
+import com.ibra.keytrackerapp.key_requests.domain.enums.RequestStatus
+import com.ibra.keytrackerapp.key_requests.domain.enums.RequestType
 
 // Список заявок пользователя
 @OptIn(ExperimentalFoundationApi::class)
@@ -74,7 +69,7 @@ fun RequestsList(
                     var isEmpty = true
 
                     for (keyRequest in vmValue.dayRequests) {
-                        if (keyRequest.pairNumber == i){
+                        if (keyRequest.pairNumber.ordinal == i){
                             Request(keyRequest)
                             isEmpty = false
                         }
@@ -117,12 +112,12 @@ fun Request(
             modifier = Modifier
                 .padding(24.dp, 0.dp, 0.dp, 0.dp)
         ) {
-            Time(time = viewModel.getPairStartTime(keyRequest.pairNumber))
+            Time(time = viewModel.getPairStartTime(keyRequest.pairNumber.ordinal))
             TypeOfRequest(keyRequest)
             Author(keyRequest)
             RequestRoom(keyRequest)
             StatusOfRequest(keyRequest)
-            Time(time = viewModel.getPairEndTime(keyRequest.pairNumber))
+            Time(time = viewModel.getPairEndTime(keyRequest.pairNumber.ordinal))
         }
     }
 }

@@ -11,13 +11,13 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface AuthApiService {
-    @POST("api/account/login")
+    @POST("http://95.163.229.215:8080/api/account/login")
     suspend fun login(@Body body: UserLoginModel): Response<TokenResponse>
 
-    @POST("api/account/register")
+    @POST("http://95.163.229.215:8080/api/account/register")
     suspend fun register(@Body body: UserRegisterModel):  Response<TokenResponse>
 
     @Headers("Content-Type: application/json")
-    @POST("api/account/logout")
+    @POST("http://95.163.229.215:8080/api/account/logout")
     suspend fun logout(@Header("Authorization") token: String) :  Response<LogoutResponse>
 }

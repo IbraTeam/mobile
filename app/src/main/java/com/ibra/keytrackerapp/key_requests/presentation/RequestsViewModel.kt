@@ -7,6 +7,7 @@ import com.ibra.keytrackerapp.common.profile.domain.model.Profile
 import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
 import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
 import com.ibra.keytrackerapp.key_requests.domain.model.KeyRequestDto
+import com.ibra.keytrackerapp.key_requests.domain.model.UserRequests
 import com.ibra.keytrackerapp.key_requests.domain.use_case.KeyRequestUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,12 +30,16 @@ class RequestsViewModel @Inject constructor(
     val uiState: StateFlow<RequestUiState> = _uiState.asStateFlow()
 
     init {
-        selectWeek()
-        generateRequests()
+        getProfile()
+        selectDate(LocalDate.now())
 
-        _uiState.value = _uiState.value.copy(
-            dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.keyRequests))
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests())
+        }
+    }
 
+    // Полученине профиля пользователя
+    fun getProfile() {
         viewModelScope.launch(Dispatchers.Default) {
             val profile = profileUseCase.getProfile(tokenUseCase.getTokenFromLocalStorage()).body()
             _uiState.value = _uiState.value.copy(profile = profile)
@@ -46,11 +51,6 @@ class RequestsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             logoutUseCase.execute("Bearer ${tokenUseCase.getTokenFromLocalStorage()}")
         }
-    }
-
-    // Генерация списка заявок пользователя
-    private fun generateRequests() {
-        _uiState.value = _uiState.value.copy(keyRequests = keyRequestUseCase.generateRequests())
     }
 
     // Перевод номера дня недели в его название
@@ -77,8 +77,11 @@ class RequestsViewModel @Inject constructor(
     fun selectDate(date: LocalDate) {
         _uiState.value = _uiState.value.copy(selectedDate = date)
         selectWeek()
-        _uiState.value = _uiState.value.copy(
-            dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.keyRequests))
+
+        if (_uiState.value.userRequests != null && _uiState.value.userRequests!!.requests.isNotEmpty())
+            _uiState.value = _uiState.value.copy(
+                dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.userRequests!!.requests)
+            )
     }
 
     // Получение названия статуса заявки
@@ -103,7 +106,7 @@ class RequestsViewModel @Inject constructor(
 data class RequestUiState(
     val selectedDate : LocalDate = LocalDate.now(),
     val selectedWeek : MutableList<LocalDate> = mutableListOf(),
-    val keyRequests : MutableList<KeyRequestDto> = mutableListOf(),
     val dayRequests : MutableList<KeyRequestDto> = mutableListOf(),
+    val userRequests: UserRequests? = null,
     val profile : Profile? = null
 )

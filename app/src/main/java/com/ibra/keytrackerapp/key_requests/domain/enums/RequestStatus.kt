@@ -1,4 +1,4 @@
-package com.ibra.keytrackerapp.key_requests.domain.model
+package com.ibra.keytrackerapp.key_requests.domain.enums
 
 // Статус заявки
 enum class RequestStatus {
