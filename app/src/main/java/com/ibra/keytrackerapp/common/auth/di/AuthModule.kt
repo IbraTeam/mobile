@@ -3,7 +3,6 @@ package com.ibra.keytrackerapp.common.auth.di
 import com.ibra.keytrackerapp.common.auth.data.repository.AuthRepositoryImpl
 import com.ibra.keytrackerapp.common.auth.domain.repository.AuthRepository
 import com.ibra.keytrackerapp.common.auth.data.service.AuthApiService
-import com.ibra.keytrackerapp.common.auth.domain.usecase.LogoutUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,10 +21,5 @@ class AuthModule {
     @Provides
     fun provideAuthRepository(authApiService: AuthApiService): AuthRepository {
         return AuthRepositoryImpl(authApiService)
-    }
-
-    @Provides
-    fun provideLogoutUserUseCase(authRepository: AuthRepository): LogoutUserUseCase {
-        return LogoutUserUseCase(authRepository = authRepository)
     }
 }
