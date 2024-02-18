@@ -25,7 +25,7 @@ fun KeyTrackerNavigation(
             LoginScreen(navController = navController)
         }
         composable(Screen.RequestsScreen.name){
-            RequestsScreen()
+            RequestsScreen(navController = navController)
         }
     }
 }

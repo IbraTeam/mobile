@@ -26,7 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.R
+import com.ibra.keytrackerapp.common.navigation.Screen
 import com.ibra.keytrackerapp.common.profile.domain.model.Profile
 import com.ibra.keytrackerapp.common.profile.domain.storage.ProfileStorage
 import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
@@ -38,10 +40,10 @@ import kotlinx.coroutines.launch
 
 // Экран заявок пользователя
 @Composable
-fun RequestsScreen()
+fun RequestsScreen(navController: NavHostController)
 {
     Column {
-        Greeting()
+        Greeting(navController)
         CurrentWeek()
         RequestsList()
     }
@@ -50,6 +52,7 @@ fun RequestsScreen()
 // Приветствие
 @Composable
 fun Greeting(
+    navController: NavHostController,
     viewModel: RequestsViewModel = hiltViewModel()
 ) {
     val vmValues by viewModel.uiState.collectAsState()
@@ -72,7 +75,10 @@ fun Greeting(
             modifier = Modifier
                 .padding(0.dp, 30.dp, 0.dp, 0.dp)
                 .align(Alignment.TopEnd),
-            onClick = { },
+            onClick = {
+                viewModel.logout()
+                navController.navigate(Screen.SignInSignUpScreen.name)
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
             )

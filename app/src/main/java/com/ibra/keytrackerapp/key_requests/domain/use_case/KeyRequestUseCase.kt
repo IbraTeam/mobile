@@ -8,7 +8,7 @@ import com.ibra.keytrackerapp.key_requests.domain.model.UserRole
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class KeyRequestUseCase {
+class KeyRequestUseCase() {
 
     // Генерация заявок пользователя
     fun generateRequests() : MutableList<KeyRequestDto> {

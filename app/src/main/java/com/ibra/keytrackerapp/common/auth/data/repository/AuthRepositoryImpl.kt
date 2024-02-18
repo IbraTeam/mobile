@@ -6,6 +6,8 @@ import com.ibra.keytrackerapp.common.auth.domain.repository.AuthRepository
 import com.ibra.keytrackerapp.common.auth.data.service.AuthApiService
 import com.ibra.keytrackerapp.common.auth.domain.model.LogoutResponse
 import com.ibra.keytrackerapp.common.token.domain.model.TokenResponse
+import com.ibra.keytrackerapp.common.token.domain.storage.TokenStorage
+import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 
@@ -38,9 +40,9 @@ class AuthRepositoryImpl(private val authApiService: AuthApiService) : AuthRepos
         }
     }
 
-    override suspend fun logout() : Response<LogoutResponse>{
+    override suspend fun logout(token: String) : Response<LogoutResponse>{
         return try {
-            val response = authApiService.logout()
+            val response = authApiService.logout(token)
             if (response.isSuccessful) {
                 Response.success(response.body())
             } else {

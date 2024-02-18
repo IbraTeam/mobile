@@ -1,13 +1,14 @@
 package com.ibra.keytrackerapp.key_requests.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ibra.keytrackerapp.common.auth.domain.usecase.LogoutUserUseCase
 import com.ibra.keytrackerapp.common.profile.domain.model.Profile
-import com.ibra.keytrackerapp.common.profile.domain.storage.ProfileStorage
 import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
+import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
 import com.ibra.keytrackerapp.key_requests.domain.model.KeyRequestDto
 import com.ibra.keytrackerapp.key_requests.domain.use_case.KeyRequestUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,9 @@ import javax.inject.Inject
 @HiltViewModel
 class RequestsViewModel @Inject constructor(
     private val keyRequestUseCase: KeyRequestUseCase,
-    private val profileStorage: ProfileStorage
+    private val profileUseCase: ProfileUseCase,
+    private val tokenUseCase: TokenUseCase,
+    private val logoutUseCase: LogoutUserUseCase
 ) : ViewModel()
 {
     private val _uiState = MutableStateFlow(RequestUiState())
@@ -32,9 +35,16 @@ class RequestsViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.keyRequests))
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val profile = profileStorage.getProfile().body()
-                _uiState.value = _uiState.value.copy(profile = profile)
+        viewModelScope.launch(Dispatchers.Default) {
+            val profile = profileUseCase.getProfile(tokenUseCase.getTokenFromLocalStorage()).body()
+            _uiState.value = _uiState.value.copy(profile = profile)
+        }
+    }
+
+    // Выход из аккаунта
+    fun logout() {
+        viewModelScope.launch(Dispatchers.Default) {
+            logoutUseCase.execute("Bearer ${tokenUseCase.getTokenFromLocalStorage()}")
         }
     }
 

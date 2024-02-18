@@ -6,6 +6,8 @@ import com.ibra.keytrackerapp.common.auth.domain.model.UserRegisterModel
 import com.ibra.keytrackerapp.common.token.domain.model.TokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface AuthApiService {
@@ -15,6 +17,7 @@ interface AuthApiService {
     @POST("api/account/register")
     suspend fun register(@Body body: UserRegisterModel):  Response<TokenResponse>
 
+    @Headers("Content-Type: application/json")
     @POST("api/account/logout")
-    suspend fun logout() :  Response<LogoutResponse>
+    suspend fun logout(@Header("Authorization") token: String) :  Response<LogoutResponse>
 }
