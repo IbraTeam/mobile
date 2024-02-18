@@ -2,9 +2,11 @@ package com.ibra.keytrackerapp.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.common.auth.data.enum.FieldType
 import com.ibra.keytrackerapp.common.auth.data.mapper.toUserLoginModel
 import com.ibra.keytrackerapp.common.auth.domain.usecase.LoginUserUseCase
+import com.ibra.keytrackerapp.common.navigation.Screen
 import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
 import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
 import com.ibra.keytrackerapp.common.validation.domain.usecase.LoginValidationUseCase
@@ -100,7 +102,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onButtonPressed() {
+    fun onButtonPressed(navHostController: NavHostController) {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 val user = _uiState.value.toUserLoginModel()
@@ -123,6 +125,10 @@ class LoginViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 handleException()
+            }
+
+            navHostController.navigate(Screen.RequestsScreen.name) {
+                navHostController.popBackStack()
             }
         }
 

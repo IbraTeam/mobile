@@ -1,5 +1,6 @@
 package com.ibra.keytrackerapp.key_requests.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,19 +41,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 // Экран заявок пользователя
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RequestsScreen(
     navController: NavHostController,
     viewModel: RequestsViewModel = hiltViewModel()
 ) {
-    viewModel.getProfile()
     val vmValues by viewModel.uiState.collectAsState()
 
     if (vmValues.profile != null){
-        Column {
-            Greeting(navController)
-            CurrentWeek()
-            RequestsList()
+        Scaffold(
+            bottomBar = {
+                BottomNavBar(navController = navController)
+            }
+        ) {
+            Column {
+                Greeting(navController)
+                CurrentWeek()
+                RequestsList()
+            }
         }
     }
 }
@@ -83,8 +91,8 @@ fun Greeting(
                 .padding(0.dp, 30.dp, 0.dp, 0.dp)
                 .align(Alignment.TopEnd),
             onClick = {
-                viewModel.logout()
                 navController.navigate(Screen.SignInSignUpScreen.name)
+                viewModel.logout()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent

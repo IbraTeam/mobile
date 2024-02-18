@@ -60,8 +60,6 @@ fun RequestsList(
         LocalOverscrollConfiguration provides null
     ) {
         LazyColumn(
-            modifier = Modifier
-                .padding(0.dp, 0.dp, 24.dp, 0.dp),
             state = rememberLazyListState()
         ) {
             item{
@@ -92,7 +90,7 @@ fun Request(
 ) {
     Row(
         modifier = Modifier
-            .padding(24.dp, 16.dp, 0.dp, 0.dp)
+            .padding(24.dp, 0.dp, 24.dp, 16.dp)
             .height(intrinsicSize = IntrinsicSize.Max)
     ) {
         Box(modifier = Modifier
@@ -290,7 +288,7 @@ fun StatusOfRequest(
 fun EmptyPair(time: String) {
     Row(
         modifier = Modifier
-            .padding(22.dp, 16.dp, 0.dp, 0.dp)
+            .padding(22.dp, 0.dp, 24.dp, 16.dp)
     ) {
         Image(
             modifier = Modifier
@@ -310,7 +308,7 @@ fun RequestsLabel()
 {
     Text(
         modifier = Modifier
-            .padding(24.dp, 10.dp, 0.dp, 0.dp),
+            .padding(24.dp, 10.dp, 0.dp, 16.dp),
         text = "Ваши заявки",
         style = TextStyle(
             fontSize = 20.sp,

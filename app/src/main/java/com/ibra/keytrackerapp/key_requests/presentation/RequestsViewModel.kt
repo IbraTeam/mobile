@@ -30,8 +30,8 @@ class RequestsViewModel @Inject constructor(
     val uiState: StateFlow<RequestUiState> = _uiState.asStateFlow()
 
     init {
-        getProfile()
         selectDate(LocalDate.now())
+        getProfile()
     }
 
     // Полученине профиля пользователя
@@ -39,6 +39,9 @@ class RequestsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val profile = profileUseCase.getProfile(tokenUseCase.getTokenFromLocalStorage()).body()
             _uiState.value = _uiState.value.copy(profile = profile)
+
+            if (_uiState.value.selectedWeek.isNotEmpty())
+                _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
         }
     }
 
