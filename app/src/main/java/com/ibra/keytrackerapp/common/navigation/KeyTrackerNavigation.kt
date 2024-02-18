@@ -16,7 +16,7 @@ fun KeyTrackerNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.RequestsScreen.name
+        startDestination = Screen.SignInSignUpScreen.name
     ) {
         composable(Screen.SignInSignUpScreen.name) {
             SignInSignUpScreen(navController = navController)

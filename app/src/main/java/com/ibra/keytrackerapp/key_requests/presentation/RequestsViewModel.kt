@@ -1,18 +1,25 @@
 package com.ibra.keytrackerapp.key_requests.presentation
 
 import androidx.lifecycle.ViewModel
+import com.ibra.keytrackerapp.common.profile.domain.model.Profile
+import com.ibra.keytrackerapp.common.profile.domain.storage.ProfileStorage
+import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
 import com.ibra.keytrackerapp.key_requests.domain.model.KeyRequestDto
 import com.ibra.keytrackerapp.key_requests.domain.use_case.KeyRequestUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class RequestsViewModel @Inject constructor(
-    private val keyRequestUseCase: KeyRequestUseCase
+    private val keyRequestUseCase: KeyRequestUseCase,
+    private val profileStorage: ProfileStorage
 ) : ViewModel()
 {
     private val _uiState = MutableStateFlow(RequestUiState())
@@ -21,8 +28,14 @@ class RequestsViewModel @Inject constructor(
     init {
         selectWeek()
         generateRequests()
+
         _uiState.value = _uiState.value.copy(
             dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.keyRequests))
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val profile = profileStorage.getProfile().body()
+                _uiState.value = _uiState.value.copy(profile = profile)
+        }
     }
 
     // Генерация списка заявок пользователя
@@ -81,5 +94,6 @@ data class RequestUiState(
     val selectedDate : LocalDate = LocalDate.now(),
     val selectedWeek : MutableList<LocalDate> = mutableListOf(),
     val keyRequests : MutableList<KeyRequestDto> = mutableListOf(),
-    val dayRequests : MutableList<KeyRequestDto> = mutableListOf()
+    val dayRequests : MutableList<KeyRequestDto> = mutableListOf(),
+    val profile : Profile? = null
 )
