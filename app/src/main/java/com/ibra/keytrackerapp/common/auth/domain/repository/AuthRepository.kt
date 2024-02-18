@@ -9,5 +9,5 @@ import retrofit2.Response
 interface AuthRepository {
     suspend fun login(user: UserLoginModel): Response<TokenResponse>
     suspend fun register(user: UserRegisterModel): Response<TokenResponse>
-    suspend fun logout(): Response<LogoutResponse>
+    suspend fun logout(token: String): Response<LogoutResponse>
 }

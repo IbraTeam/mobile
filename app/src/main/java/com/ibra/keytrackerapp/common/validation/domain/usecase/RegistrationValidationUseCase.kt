@@ -25,24 +25,27 @@ class RegistrationValidationUseCase @Inject constructor(
         return validatePasswordUseCase.execute(password)
     }
 
-    fun validateFirstPage(
+    fun isDataValid(
         name: String,
         surname: String,
         email: String,
+        password: String,
         nameErrorMessage: Int?,
-        loginErrorMessage: Int?,
+        surnameErrorMessage: Int?,
         emailErrorMessage: Int?,
+        passwordErrorMessage: Int?
     ): Boolean {
-        if (name.isBlank() && surname.isBlank() && email.isBlank() && email.isBlank()) {
+        if (name.isBlank() && surname.isBlank() && email.isBlank() && password.isBlank()) {
             return true
         }
         return nameErrorMessage == null
-                && loginErrorMessage == null
+                && surnameErrorMessage == null
                 && emailErrorMessage == null
+                && passwordErrorMessage == null
     }
 
 
-    fun isButtonEnabledForPage(
+    fun isButtonEnabled(
         name: String,
         surname: String,
         email: String,

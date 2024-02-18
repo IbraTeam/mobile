@@ -6,8 +6,8 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class LogoutUserUseCase @Inject constructor(private val authRepository: AuthRepository) {
-    suspend fun execute() : Response<LogoutResponse> {
-        return authRepository.logout()
+    suspend fun execute(token: String) : Response<LogoutResponse> {
+        return authRepository.logout(token)
     }
 
 }
