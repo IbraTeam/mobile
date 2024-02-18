@@ -38,9 +38,9 @@ class AuthRepositoryImpl(private val authApiService: AuthApiService) : AuthRepos
         }
     }
 
-    override suspend fun logout() : Response<LogoutResponse>{
+    override suspend fun logout(token: String) : Response<LogoutResponse>{
         return try {
-            val response = authApiService.logout()
+            val response = authApiService.logout(token)
             if (response.isSuccessful) {
                 Response.success(response.body())
             } else {

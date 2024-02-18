@@ -45,6 +45,7 @@ import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.R
 import com.ibra.keytrackerapp.common.enums.TransferStatus
 import com.ibra.keytrackerapp.common.keytrack.data.KeyCardButtonData
+import com.ibra.keytrackerapp.common.navigation.Screen
 import com.ibra.keytrackerapp.common.ui.component.ExitButton
 import com.ibra.keytrackerapp.common.ui.theme.light12
 import com.ibra.keytrackerapp.common.ui.theme.semiBold16
@@ -64,11 +65,12 @@ fun KeyTrackerScreen(
 
 
 
-    LaunchedEffect(uiState.isExitButtonPressed) {
-        if (uiState.isExitButtonPressed) {
-            navController.navigateUp()
+    LaunchedEffect(uiState.isLogout) {
+        if (uiState.isLogout) {
+            navController.navigate(Screen.SignInSignUpScreen.name)
         }
     }
+
     LaunchedEffect(uiState.isSheetVisible) {
         if (uiState.isSheetVisible) {
             sheetState.show()
