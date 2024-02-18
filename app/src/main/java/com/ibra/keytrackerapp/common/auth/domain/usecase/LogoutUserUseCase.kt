@@ -9,4 +9,5 @@ class LogoutUserUseCase @Inject constructor(private val authRepository: AuthRepo
     suspend fun execute() : Response<LogoutResponse> {
         return authRepository.logout()
     }
+
 }
