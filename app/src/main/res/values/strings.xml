@@ -34,6 +34,17 @@
     <string name="email">Электронная почта</string>
     <string name="password">Пароль</string>
     <string name="enter">Войти</string>
+    <string name="enter_pls">Войдите</string>
     <string name="wrong_login_or_password">Неверный логин или пароль</string>
+    <string name="create_your_account">Создайте свой аккаунт</string>
+    <string name="name">Имя</string>
+    <string name="surname">Фамилия</string>
+    <string name="an_account_already_exists">Уже есть аккаунт?</string>
+    <string name="regist">Зарегистрироваться</string>
+    <string name="no_digit_password">Пароль должен содержать цифры</string>
+    <string name="no_special_char_password">Пароль должен состоять только из букв и цифр</string>
+    <string name="whitespace_password">Пароль не может содержать пробелы</string>
+    <string name="wrong_length_password">Пароль должен быть от 6 до 20 символов</string>
+    <string name="wrong_used_data">Пользователь с такой почтой уже существует</string>
     <string name="input_name">Введите имя</string>
 </resources>

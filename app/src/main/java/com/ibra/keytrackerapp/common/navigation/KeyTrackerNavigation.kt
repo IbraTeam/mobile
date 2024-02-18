@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ibra.keytrackerapp.login.LoginScreen
+import com.ibra.keytrackerapp.register.RegisterScreen
 import com.ibra.keytrackerapp.sign_in_sign_up.SignInSignUpScreen
 
 @Composable
@@ -14,7 +15,7 @@ fun KeyTrackerNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.name
+        startDestination = Screen.SignInSignUpScreen.name
     ) {
         composable(Screen.SignInSignUpScreen.name) {
             SignInSignUpScreen(navController = navController)
@@ -24,6 +25,9 @@ fun KeyTrackerNavigation(
 //        }
         composable(Screen.Login.name) {
             LoginScreen(navController = navController)
+        }
+        composable(Screen.Registration.name) {
+            RegisterScreen(navController = navController)
         }
     }
 
