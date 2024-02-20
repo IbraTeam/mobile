@@ -52,6 +52,14 @@ class RequestsViewModel @Inject constructor(
         }
     }
 
+    // Удаление заявки
+    fun deleteRequest(requestId: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            keyRequestUseCase.deleteRequest(requestId)
+            _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
+        }
+    }
+
     // Перевод номера дня недели в его название
     fun getDayOfWeekName(dayOfWeek: Int) : String {
         return keyRequestUseCase.getDayOfWeekName(dayOfWeek)

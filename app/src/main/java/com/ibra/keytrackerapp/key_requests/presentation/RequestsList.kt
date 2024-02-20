@@ -171,7 +171,7 @@ fun TypeOfRequest(
                     .size(24.dp)
                     .clip(shape = CircleShape)
                     .clickable {
-                        // TODO
+                        viewModel.deleteRequest(keyRequest.id)
                     },
                 painter = painterResource(id = when (keyRequest.status) {
                     RequestStatus.Rejected -> R.drawable.red_cross

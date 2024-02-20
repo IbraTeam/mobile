@@ -9,6 +9,9 @@ import com.ibra.keytrackerapp.key_requests.domain.model.UserDto
 import com.ibra.keytrackerapp.key_requests.domain.enums.UserRole
 import com.ibra.keytrackerapp.key_requests.domain.model.UserRequests
 import com.ibra.keytrackerapp.key_requests.domain.repository.RequestRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -26,74 +29,10 @@ class KeyRequestUseCase @Inject constructor(
         return requestRepository.getUserRequests("Bearer ${tokenUseCase.getTokenFromLocalStorage()}", weekStartStr)
     }
 
-    // Генерация заявок пользователя
-    fun generateRequests() : MutableList<KeyRequestDto> {
-        var requests = mutableListOf<KeyRequestDto>()
-
-        requests.add(
-            KeyRequestDto(
-                id = "1",
-                name = "332(2)",
-                pairName = "",
-                status = RequestStatus.Pending,
-                dateTime = LocalDate.now().toString(),
-                dayNumb = 3,
-                repeated = false,
-                typeBooking = RequestType.Booking,
-                pairNumber = PairNumber.First,
-                keyId = "1",
-                user = UserDto(
-                    id = "1",
-                    name = "Змеев Олег Алексеевич",
-                    email = "oleg@alekseevich.com",
-                    role = UserRole.TEACHER
-                )
-            )
-        )
-
-        requests.add(
-            KeyRequestDto(
-                id = "2",
-                name = "223(2)",
-                pairName = "Программирование",
-                status = RequestStatus.Accepted,
-                dateTime = LocalDate.now().toString(),
-                dayNumb = 3,
-                repeated = false,
-                typeBooking = RequestType.Pair,
-                pairNumber = PairNumber.Second,
-                keyId = "2",
-                user = UserDto(
-                    id = "1",
-                    name = "Змеев Олег Алексеевич",
-                    email = "oleg@alekseevich.com",
-                    role = UserRole.TEACHER
-                )
-            )
-        )
-
-        requests.add(
-            KeyRequestDto(
-                id = "3",
-                name = "123(2)",
-                pairName = "",
-                status = RequestStatus.Rejected,
-                dateTime = LocalDate.now().toString(),
-                dayNumb = 3,
-                repeated = false,
-                typeBooking = RequestType.Booking,
-                pairNumber = PairNumber.Fourth,
-                keyId = "3",
-                user = UserDto(
-                    id = "1",
-                    name = "Змеев Олег Алексеевич",
-                    email = "oleg@alekseevich.com",
-                    role = UserRole.TEACHER
-                )
-            )
-        )
-
-        return requests
+    // Удаление заявки
+    suspend fun deleteRequest(requestId: String) {
+        val token = "Bearer ${tokenUseCase.getTokenFromLocalStorage()}"
+        requestRepository.deleteRequest(token, requestId)
     }
 
     // Перевод номера дня недели в его название

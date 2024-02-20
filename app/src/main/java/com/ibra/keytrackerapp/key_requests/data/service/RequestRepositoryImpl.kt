@@ -11,4 +11,9 @@ class RequestRepositoryImpl(
     override suspend fun getUserRequests(token: String, weekStart: String): UserRequests {
         return requestApiService.getUserRequests(token, weekStart)
     }
+
+    // Удаление заявки
+    override suspend fun deleteRequest(token: String, id: String) {
+        requestApiService.deleteRequest(token, id)
+    }
 }
