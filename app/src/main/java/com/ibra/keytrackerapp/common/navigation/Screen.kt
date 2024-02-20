@@ -5,5 +5,6 @@ enum class Screen {
     SignInSignUpScreen,
     RequestsScreen,
     Login,
-    Registration
+    Registration,
+    CreateRequestScreen
 }
