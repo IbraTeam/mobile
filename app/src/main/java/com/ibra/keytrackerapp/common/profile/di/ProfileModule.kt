@@ -26,8 +26,8 @@ class ProfileModule {
     }
 
     @Provides
-    fun provideApiImplementation(retrofit: Retrofit): ProfileApiService {
-        return retrofit.create(ProfileApiService::class.java)
+    fun provideApiImplementation(retrofit: List<Retrofit>): ProfileApiService {
+        return retrofit[0].create(ProfileApiService::class.java)
     }
 
     @Provides

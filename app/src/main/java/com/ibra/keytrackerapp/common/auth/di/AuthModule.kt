@@ -14,8 +14,8 @@ import retrofit2.Retrofit
 class AuthModule {
 
     @Provides
-    fun provideApiImplementation(retrofit: Retrofit): AuthApiService {
-        return retrofit.create(AuthApiService::class.java)
+    fun provideApiImplementation(retrofit: List<Retrofit>): AuthApiService {
+        return retrofit[0].create(AuthApiService::class.java)
     }
 
     @Provides

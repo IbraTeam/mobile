@@ -10,7 +10,6 @@ import javax.inject.Inject
 class ProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val profileStorage: ProfileStorage
-
 ) {
     suspend fun getProfile(token: String) : Response<Profile?> {
         return try{

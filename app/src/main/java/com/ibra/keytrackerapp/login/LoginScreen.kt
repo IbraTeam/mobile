@@ -85,7 +85,13 @@ fun LoginScreen(
                 navController.navigate(Screen.Registration.name) {
                     navController.popBackStack()
                 }
-            }, onButtonClick = { viewModel.onButtonPressed() })
+            }, onButtonClick = {
+                viewModel.onButtonPressed(navController)
+
+                /*navController.navigate(Screen.RequestsScreen.name) {
+                    navController.popBackStack()
+                }*/
+            })
         }
     }
 }

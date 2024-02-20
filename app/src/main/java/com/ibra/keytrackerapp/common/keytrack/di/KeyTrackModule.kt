@@ -13,8 +13,8 @@ import retrofit2.Retrofit
 @InstallIn(SingletonComponent::class)
 class KeyTrackModule{
     @Provides
-    fun provideApiImpl(retrofit: Retrofit) : KeyTrackApiService {
-        return retrofit.create(KeyTrackApiService::class.java)
+    fun provideApiImpl(retrofit: List<Retrofit>) : KeyTrackApiService {
+        return retrofit[0].create(KeyTrackApiService::class.java)
     }
 
     @Provides
