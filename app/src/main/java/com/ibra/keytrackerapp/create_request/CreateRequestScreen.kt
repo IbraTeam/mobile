@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.R
 import com.ibra.keytrackerapp.common.ui.theme.Pink
+import com.ibra.keytrackerapp.create_request.domain.PairSelection
 import com.ibra.keytrackerapp.key_requests.presentation.BottomNavBar
 
 // Экран создания заявки
@@ -44,6 +45,7 @@ fun CreateRequestScreen(navController: NavHostController)
         Column {
             CreateRequestLabel()
             DateSelection()
+            PairSelection()
         }
     }
 

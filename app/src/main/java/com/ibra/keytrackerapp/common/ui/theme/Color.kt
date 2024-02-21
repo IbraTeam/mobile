@@ -25,3 +25,6 @@ val RedColor = Color(0xFFFF3A2D)
 
 val DarkerGrayColor = Color(0xFF4A4A4A)
 val VeryLightGray = Color(0xFFF1F5F9)
+
+val PairSelectionTextColor = Color(0xFFA3A3A3)
+val PairTimeColor = Color(0xFF1E293B)

@@ -1,8 +1,8 @@
 package com.ibra.keytrackerapp.create_request
 
 import androidx.lifecycle.ViewModel
+import com.ibra.keytrackerapp.common.enums.PairNumber
 import com.ibra.keytrackerapp.create_request.domain.CreateRequestUseCase
-import com.ibra.keytrackerapp.key_requests.domain.enums.PairNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +20,17 @@ class CreateRequestViewModel @Inject constructor(
 
     init {
         updateDatesRow()
+    }
+
+    // Нажатие на выпадающий список пар
+    fun onDropDownMenuClick() {
+        _uiState.value = _uiState.value.copy(isPairSelecting = !_uiState.value.isPairSelecting)
+    }
+
+    // Выбор пары из выпадающего списка
+    fun onPairSelected(pair: PairNumber) {
+        _uiState.value = _uiState.value.copy(selectedPair = pair)
+        onDropDownMenuClick()
     }
 
     // Нажатие на кнопку Отмена
@@ -46,10 +57,21 @@ class CreateRequestViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedDate = date)
         updateDatesRow()
     }
+
+    // Получение времени начала пары
+    fun getPairStartTime(pairNum : Int) : String {
+        return createRequestUseCase.getPairStartTime(pairNum)
+    }
+
+    // Получение времени конца пары
+    fun getPairEndTime(pairNum : Int) : String {
+        return createRequestUseCase.getPairEndTime(pairNum)
+    }
 }
 
 data class CreateRequestUiState(
     val selectedDate : LocalDate = LocalDate.now(),
     val datesRow : List<LocalDate> = listOf(),
-    val selectedPair : PairNumber = PairNumber.First
+    val selectedPair : PairNumber = PairNumber.First,
+    val isPairSelecting : Boolean = false
 )

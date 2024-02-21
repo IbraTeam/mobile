@@ -26,4 +26,32 @@ class CreateRequestUseCase {
             else -> ""
         }
     }
+
+    // Получение времени начала пары
+    fun getPairStartTime(pairNum : Int) : String {
+        return when (pairNum) {
+            0 -> "8.45"
+            1 -> "10.35"
+            2 -> "12.25"
+            3 -> "14.45"
+            4 -> "16.35"
+            5 -> "18.25"
+            6 -> "20.15"
+            else -> ""
+        }
+    }
+
+    // Получение времени конца пары
+    fun getPairEndTime(pairNum : Int) : String {
+        return when (pairNum) {
+            0 -> "10.20"
+            1 -> "12.10"
+            2 -> "14.00"
+            3 -> "16.20"
+            4 -> "18.10"
+            5 -> "20.00"
+            6 -> "21.50"
+            else -> ""
+        }
+    }
 }
