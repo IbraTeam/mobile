@@ -76,7 +76,7 @@ fun RequestElement(navController: NavHostController)
             .padding(24.dp, 16.dp, 0.dp, 8.dp)
             .clip(shape = RoundedCornerShape(8.dp))
             .clickable {
-
+                navController.navigate(Screen.RequestsScreen.name)
             }
     ) {
         Text(
@@ -109,12 +109,11 @@ fun RequestElement(navController: NavHostController)
 fun CreateRequestButton(
     navController: NavHostController,
     viewModel: CreateRequestViewModel = hiltViewModel()
-)
-{
+) {
     val vmValues by viewModel.uiState.collectAsState()
 
     val isSelected = navController.currentBackStackEntry?.destination?.route == Screen.CreateRequestScreen.name
-    val isEnabled = isSelected && !vmValues.isError
+    val isEnabled = !isSelected || !vmValues.isError && vmValues.selectedKey != null
 
     Box(modifier = Modifier
         .padding(0.dp, 16.dp, 0.dp, 0.dp)
@@ -129,7 +128,23 @@ fun CreateRequestButton(
                 containerColor = Color.Transparent
             ),
             enabled = isEnabled,
-            onClick = { /*TODO*/ }
+            onClick = {
+                if (isSelected) {
+                    viewModel.onSendRequestButtonClick()
+                }
+                else {
+                    if (!navController.popBackStack(Screen.CreateRequestScreen.name, false)){
+                        navController.navigate(Screen.CreateRequestScreen.name) {
+                             popUpTo(Screen.RequestsScreen.name)
+                        }
+                    }
+                    else{
+                        while (navController.currentBackStackEntry?.destination?.route != Screen.CreateRequestScreen.name) {
+                            navController.popBackStack()
+                        }
+                    }
+                }
+            }
         ) {
             Text(
                 modifier = Modifier
@@ -158,7 +173,16 @@ fun KeysElement(navController: NavHostController)
             .padding(0.dp, 16.dp, 24.dp, 8.dp)
             .clip(shape = RoundedCornerShape(8.dp))
             .clickable {
-                // TODO
+                if (!navController.popBackStack(Screen.KeyTracker.name, false)){
+                    navController.navigate(Screen.KeyTracker.name) {
+                        popUpTo(Screen.RequestsScreen.name)
+                    }
+                }
+                else{
+                    while (navController.currentBackStackEntry?.destination?.route != Screen.KeyTracker.name) {
+                        navController.popBackStack()
+                    }
+                }
             }
     ) {
         Text(

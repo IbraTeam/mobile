@@ -1,6 +1,6 @@
 package com.ibra.keytrackerapp.create_request.di
 
-import com.ibra.keytrackerapp.create_request.domain.CreateRequestUseCase
+import com.ibra.keytrackerapp.create_request.domain.use_case.CreateRequestUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,7 +11,7 @@ import dagger.hilt.android.components.ViewModelComponent
 class CreateRequestModule {
 
     @Provides
-    fun provideCreateRequestUseCase(): CreateRequestUseCase{
+    fun provideCreateRequestUseCase(): CreateRequestUseCase {
         return CreateRequestUseCase()
     }
 }

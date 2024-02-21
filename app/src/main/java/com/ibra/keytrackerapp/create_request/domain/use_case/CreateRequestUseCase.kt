@@ -1,5 +1,6 @@
-package com.ibra.keytrackerapp.create_request.domain
+package com.ibra.keytrackerapp.create_request.domain.use_case
 
+import com.ibra.keytrackerapp.create_request.domain.model.FreeKey
 import java.time.LocalDate
 
 class CreateRequestUseCase {
@@ -10,6 +11,32 @@ class CreateRequestUseCase {
             selectedDate.minusDays(1),
             selectedDate,
             selectedDate.plusDays(1)
+        )
+    }
+
+    // Генерация списка свободных ключей
+    fun generageFreeKeys() : List<FreeKey> {
+        return listOf(
+            FreeKey(
+                name = "302",
+                keyId = "1"
+            ),
+            FreeKey(
+                name = "401",
+                keyId = "2"
+            ),
+            FreeKey(
+                name = "101",
+                keyId = "3"
+            ),
+            FreeKey(
+                name = "13",
+                keyId = "4"
+            ),
+            FreeKey(
+                name = "1212",
+                keyId = "6"
+            ),
         )
     }
 

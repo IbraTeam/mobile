@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.R
+import com.ibra.keytrackerapp.common.navigation.Screen
 import com.ibra.keytrackerapp.common.ui.theme.Pink
-import com.ibra.keytrackerapp.create_request.domain.PairSelection
 import com.ibra.keytrackerapp.key_requests.presentation.BottomNavBar
 
 // Экран создания заявки
@@ -39,10 +39,11 @@ fun CreateRequestScreen(navController: NavHostController)
         }
     ) {
         Column {
-            CreateRequestLabel()
+            CreateRequestLabel(navController)
             DateSelection()
             PairSelection()
             RepeatRequest()
+            RoomSelection()
         }
     }
 
@@ -51,7 +52,7 @@ fun CreateRequestScreen(navController: NavHostController)
 // Заголовок экрана создания заявки
 @Composable
 fun CreateRequestLabel(
-    viewModel: CreateRequestViewModel = hiltViewModel()
+    navController: NavHostController
 ) {
     Box(
         modifier = Modifier
@@ -79,7 +80,11 @@ fun CreateRequestLabel(
                     .align(Alignment.CenterHorizontally)
                     .clip(shape = CircleShape)
                     .clickable {
-
+                        navController.navigate(Screen.RequestsScreen.name) {
+                            popUpTo(Screen.RequestsScreen.name) {
+                                inclusive = true
+                            }
+                        }
                     },
                 painter = painterResource(id = R.drawable.cancel_button),
                 contentDescription = null
