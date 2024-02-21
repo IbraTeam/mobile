@@ -28,3 +28,5 @@ val VeryLightGray = Color(0xFFF1F5F9)
 
 val PairSelectionTextColor = Color(0xFFA3A3A3)
 val PairTimeColor = Color(0xFF1E293B)
+val RepeatBgColor = Color(0xFFF2F3F7)
+val RepeatPlaceholderColor = Color(0xFFBCBBC1)

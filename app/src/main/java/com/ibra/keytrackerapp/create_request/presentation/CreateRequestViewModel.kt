@@ -1,4 +1,4 @@
-package com.ibra.keytrackerapp.create_request
+package com.ibra.keytrackerapp.create_request.presentation
 
 import androidx.lifecycle.ViewModel
 import com.ibra.keytrackerapp.common.enums.PairNumber
@@ -31,6 +31,17 @@ class CreateRequestViewModel @Inject constructor(
     fun onPairSelected(pair: PairNumber) {
         _uiState.value = _uiState.value.copy(selectedPair = pair)
         onDropDownMenuClick()
+    }
+
+    // Ввод кол-ва недель
+    fun onWeeksChanged(weeks: String) {
+        if (weeks.toIntOrNull() == null && weeks.isNotEmpty()) {
+            _uiState.value = _uiState.value.copy(isError = true)
+        }
+        else {
+            _uiState.value = _uiState.value.copy(isError = false)
+            _uiState.value = _uiState.value.copy(weeks = weeks.toIntOrNull() ?: 1)
+        }
     }
 
     // Нажатие на кнопку Отмена
@@ -73,5 +84,7 @@ data class CreateRequestUiState(
     val selectedDate : LocalDate = LocalDate.now(),
     val datesRow : List<LocalDate> = listOf(),
     val selectedPair : PairNumber = PairNumber.First,
-    val isPairSelecting : Boolean = false
+    val isPairSelecting : Boolean = false,
+    val isError : Boolean = false,
+    val weeks : Int = 1
 )

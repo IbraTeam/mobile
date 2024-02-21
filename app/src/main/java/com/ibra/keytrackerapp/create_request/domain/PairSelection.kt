@@ -48,7 +48,7 @@ import com.ibra.keytrackerapp.common.ui.theme.BlueColor
 import com.ibra.keytrackerapp.common.ui.theme.PairSelectionTextColor
 import com.ibra.keytrackerapp.common.ui.theme.PairTimeColor
 import com.ibra.keytrackerapp.common.ui.theme.VeryLightGray
-import com.ibra.keytrackerapp.create_request.CreateRequestViewModel
+import com.ibra.keytrackerapp.create_request.presentation.CreateRequestViewModel
 
 // Выбор пары
 @Composable
