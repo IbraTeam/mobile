@@ -96,6 +96,9 @@ class KeyRequestUseCase @Inject constructor(
 
     // Получение всех заявок на день
     fun getDayRequests(date : LocalDate, keyRequestList : List<KeyRequestDto>) : MutableList<KeyRequestDto> {
+        if (keyRequestList == null || keyRequestList.isEmpty())
+            return mutableListOf()
+
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         val newList = keyRequestList.toMutableList()
