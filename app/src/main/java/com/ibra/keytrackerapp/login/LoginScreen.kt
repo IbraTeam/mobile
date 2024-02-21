@@ -49,11 +49,11 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.isButtonPressed) {
+   /* LaunchedEffect(uiState.isButtonPressed) {
         if (uiState.isButtonPressed) {
             navController.navigate(Screen.KeyTracker.name)
         }
-    }
+    }*/
 
     Scaffold(
         modifier = modifier
