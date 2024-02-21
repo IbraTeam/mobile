@@ -57,6 +57,10 @@ class RequestsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             keyRequestUseCase.deleteRequest(requestId)
             _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
+
+            _uiState.value = _uiState.value.copy(
+                dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.userRequests!!.requests)
+            )
         }
     }
 
