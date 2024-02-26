@@ -1,6 +1,7 @@
 package com.ibra.keytrackerapp.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,7 +60,7 @@ fun LoginScreen(
         modifier = modifier
     ) { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().background(Color.White)
         ) {
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.corner_circles),
@@ -74,6 +75,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .background(Color.White)
         ) {
             TitleTextSection()
             FieldsSection(

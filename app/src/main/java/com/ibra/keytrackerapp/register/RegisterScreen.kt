@@ -61,7 +61,7 @@ fun RegisterScreen(
         modifier = modifier
     ) { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().background(Color.White)
         ) {
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.corner_circles),
@@ -76,6 +76,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .background(Color.White)
         ) {
             TitleTextSection()
             FieldsSection(

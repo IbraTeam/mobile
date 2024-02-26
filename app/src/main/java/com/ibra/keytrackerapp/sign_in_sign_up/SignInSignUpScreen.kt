@@ -62,7 +62,9 @@ fun SignInSignUpScreen(
 
 
     // Картинка сверху экрана
-    Column {
+    Column(
+        Modifier.background(Color.White)
+    ) {
         IntroductionImage()
         AppDescription()
         Spacer(modifier = Modifier.weight(1f))
