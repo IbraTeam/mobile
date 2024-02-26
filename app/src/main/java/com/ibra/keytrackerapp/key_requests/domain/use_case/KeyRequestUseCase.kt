@@ -90,6 +90,7 @@ class KeyRequestUseCase @Inject constructor(
         return when(keyRequestDto.status) {
             RequestStatus.Rejected -> "Отклонена"
             RequestStatus.Pending -> "На рассмотрении"
+            RequestStatus.Issued -> "Подтверждена"
             RequestStatus.Accepted -> "Подтверждена"
         }
     }

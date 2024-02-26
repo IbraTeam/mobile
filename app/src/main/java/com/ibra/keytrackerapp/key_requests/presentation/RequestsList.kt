@@ -99,7 +99,7 @@ fun Request(
             .fillMaxHeight()
             .background(
                 color = when (keyRequest.status) {
-                    RequestStatus.Accepted -> GreenColor
+                    RequestStatus.Accepted, RequestStatus.Issued -> GreenColor
                     RequestStatus.Pending -> BlueColor
                     RequestStatus.Rejected -> RedColor
                 }
@@ -165,7 +165,7 @@ fun TypeOfRequest(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        if (keyRequest.status != RequestStatus.Accepted || keyRequest.typeBooking != RequestType.Pair)
+        if ((keyRequest.status != RequestStatus.Accepted && keyRequest.status != RequestStatus.Issued)|| keyRequest.typeBooking != RequestType.Pair)
             Image(
                 modifier = Modifier
                     .size(24.dp)
@@ -176,7 +176,7 @@ fun TypeOfRequest(
                 painter = painterResource(id = when (keyRequest.status) {
                     RequestStatus.Rejected -> R.drawable.red_cross
                     RequestStatus.Pending -> R.drawable.blue_cross
-                    RequestStatus.Accepted -> R.drawable.green_cross
+                    RequestStatus.Accepted, RequestStatus.Issued -> R.drawable.green_cross
                 }),
                 contentDescription = null
             )
@@ -257,7 +257,7 @@ fun StatusOfRequest(
                 .align(Alignment.CenterVertically),
             imageVector = ImageVector.vectorResource(
                 when (keyRequest.status) {
-                    RequestStatus.Accepted -> R.drawable.accepted_status
+                    RequestStatus.Accepted, RequestStatus.Issued -> R.drawable.accepted_status
                     RequestStatus.Pending -> R.drawable.pending_status
                     RequestStatus.Rejected -> R.drawable.rejected_status
                 }),
