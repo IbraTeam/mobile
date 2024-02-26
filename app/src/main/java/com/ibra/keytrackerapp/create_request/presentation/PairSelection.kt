@@ -67,29 +67,18 @@ fun PairSelection(
         )
     )
 
-    Box {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max)
-                .padding(24.dp, 16.dp, 24.dp, 0.dp)
-                .clip(shape = RoundedCornerShape(10.dp))
-                .background(VeryLightGray),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            PairTime(isStartTime = true)
-            PairDropDownButton()
-            PairTime(isStartTime = false)
-        }
-
-        if (vmValues.isPairSelecting)
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(90.dp, 96.dp, 0.dp, 0.dp)
-            ){
-                PairsList()
-            }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Max)
+            .padding(24.dp, 16.dp, 24.dp, 0.dp)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(VeryLightGray),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        PairTime(isStartTime = true)
+        PairDropDownButton()
+        PairTime(isStartTime = false)
     }
 }
 

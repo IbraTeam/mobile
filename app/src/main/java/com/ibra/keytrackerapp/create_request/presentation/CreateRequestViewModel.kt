@@ -1,14 +1,22 @@
 package com.ibra.keytrackerapp.create_request.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.common.enums.PairNumber
+import com.ibra.keytrackerapp.common.navigation.Screen
+import com.ibra.keytrackerapp.create_request.domain.model.CreateRequestDto
 import com.ibra.keytrackerapp.create_request.domain.model.FreeKey
 import com.ibra.keytrackerapp.create_request.domain.use_case.CreateRequestUseCase
+import com.ibra.keytrackerapp.key_requests.domain.enums.RequestType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,9 +29,7 @@ class CreateRequestViewModel @Inject constructor(
 
     init {
         updateDatesRow()
-
-        // Строка для генерации аудиторий, после добавления запросов её можно убирать
-        _uiState.value = _uiState.value.copy(freeKeys = createRequestUseCase.generageFreeKeys())
+        getFreeKeys()
     }
 
     // Выбор свободной аудитории
@@ -41,14 +47,13 @@ class CreateRequestViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedPair = pair)
         onDropDownMenuClick()
 
-
-        // Обновление выделения аудиторий надо оставить ниже строк выполнения запроса их получения
-        updateKeySelection()
+        getFreeKeys()
     }
 
     // Ввод кол-ва недель
     fun onWeeksChanged(weeks: String) {
-        if (weeks.toIntOrNull() == null && weeks.isNotEmpty() || weeks.toIntOrNull() != null && weeks.toInt() <= 0) {
+        if (weeks.toIntOrNull() == null && weeks.isNotEmpty() ||
+            weeks.toIntOrNull() != null && (weeks.toInt() <= 0 || weeks.toInt() > 10)) {
             _uiState.value = _uiState.value.copy(isError = true)
         }
         else {
@@ -58,12 +63,45 @@ class CreateRequestViewModel @Inject constructor(
     }
 
     fun onSendRequestButtonClick() {
+        val requestValues = _uiState.value
 
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        var date = requestValues.selectedDate.format(formatter)
+        date = "${date}T06:05:48.750Z"
+
+        val request = CreateRequestDto(
+            dateTime = date,
+            RepeatCount = requestValues.weeks,
+            typeBooking = RequestType.Booking,
+            pairNumber = requestValues.selectedPair,
+            keyId = requestValues.selectedKey!!.keyId,
+            pairName = null
+        )
+
+        viewModelScope.launch(Dispatchers.Default) {
+            try{
+                createRequestUseCase.createRequest(request)
+            }
+            catch (e : Exception) { }
+        }
     }
 
-    // Нажатие на кнопку Отмена
-    fun onCancelButtonClick() {
+    // Получение списка свободных аудиторий
+    private fun getFreeKeys() {
+        val requestValues = _uiState.value
+        val date = requestValues.selectedDate.toString()
+        val pair = requestValues.selectedPair.ordinal
 
+        viewModelScope.launch {
+            try {
+                val freeKeys = createRequestUseCase.getFreeKeys(date, pair, 1)
+                _uiState.value = _uiState.value.copy(freeKeys = freeKeys)
+
+                updateKeySelection()
+
+            } catch (e: Exception) {
+            }
+        }
     }
 
     // Сбрасывает выбор ключа, если он пропадает из списка доступных
@@ -94,9 +132,7 @@ class CreateRequestViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedDate = date)
         updateDatesRow()
 
-
-        // Обновление выделения аудиторий надо оставить ниже строк выполнения запроса их получения
-        updateKeySelection()
+        getFreeKeys()
     }
 
     // Получение времени начала пары

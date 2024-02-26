@@ -30,19 +30,31 @@ class RequestsViewModel @Inject constructor(
     val uiState: StateFlow<RequestUiState> = _uiState.asStateFlow()
 
     init {
-        selectDate(LocalDate.now())
-        getProfile()
+        _uiState.value = _uiState.value.copy(selectedDate = LocalDate.now())
+        selectWeek()
+
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                getProfile()
+                updateDayRequest()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(dayRequests = mutableListOf())
+                _uiState.value = _uiState.value.copy(userRequests = UserRequests(
+                    requests = listOf(),
+                    weekStart = LocalDate.now().toString(),
+                    weekEnd = LocalDate.now().toString()
+                ))
+            }
+        }
     }
 
     // Полученине профиля пользователя
-    fun getProfile() {
-        viewModelScope.launch(Dispatchers.Default) {
-            val profile = profileUseCase.getProfile(tokenUseCase.getTokenFromLocalStorage()).body()
-            _uiState.value = _uiState.value.copy(profile = profile)
+    private suspend fun getProfile() {
+        val profile = profileUseCase.getProfile(tokenUseCase.getTokenFromLocalStorage()).body()
+        _uiState.value = _uiState.value.copy(profile = profile)
 
-            if (_uiState.value.selectedWeek.isNotEmpty())
-                _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
-        }
+        if (_uiState.value.selectedWeek.isNotEmpty())
+            _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
     }
 
     // Выход из аккаунта
@@ -56,7 +68,12 @@ class RequestsViewModel @Inject constructor(
     fun deleteRequest(requestId: String) {
         viewModelScope.launch(Dispatchers.Default) {
             keyRequestUseCase.deleteRequest(requestId)
+
             _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
+
+            _uiState.value = _uiState.value.copy(
+                dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.userRequests)
+            )
         }
     }
 
@@ -85,14 +102,21 @@ class RequestsViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedDate = date)
         selectWeek()
 
-        if (_uiState.value.userRequests != null && _uiState.value.userRequests!!.requests.isNotEmpty())
-            _uiState.value = _uiState.value.copy(
-                dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.userRequests!!.requests)
-            )
-
-        viewModelScope.launch(Dispatchers.Default) {
-            _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
+        viewModelScope.launch {
+            try {
+                updateDayRequest()
+            }
+            catch (e : Exception) { }
         }
+    }
+
+    // Обновление списка заявок
+    private suspend fun updateDayRequest() {
+        _uiState.value = _uiState.value.copy(userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]))
+
+        _uiState.value = _uiState.value.copy(
+            dayRequests = keyRequestUseCase.getDayRequests(_uiState.value.selectedDate, _uiState.value.userRequests)
+        )
     }
 
     // Получение названия статуса заявки

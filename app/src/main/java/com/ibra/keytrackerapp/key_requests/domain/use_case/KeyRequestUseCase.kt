@@ -95,10 +95,14 @@ class KeyRequestUseCase @Inject constructor(
     }
 
     // Получение всех заявок на день
-    fun getDayRequests(date : LocalDate, keyRequestList : List<KeyRequestDto>) : MutableList<KeyRequestDto> {
+    fun getDayRequests(date : LocalDate, keyRequestList : UserRequests?) : MutableList<KeyRequestDto> {
+        if (keyRequestList == null)
+            return mutableListOf()
+
+        val requestList = keyRequestList.requests
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-        val newList = keyRequestList.toMutableList()
+        val newList = requestList.toMutableList()
         newList.removeIf { LocalDate.parse(it.dateTime.slice(0..9), formatter) != date }
 
         return newList

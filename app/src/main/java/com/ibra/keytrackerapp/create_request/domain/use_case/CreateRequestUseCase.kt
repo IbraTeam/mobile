@@ -1,9 +1,24 @@
 package com.ibra.keytrackerapp.create_request.domain.use_case
 
+import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
+import com.ibra.keytrackerapp.create_request.domain.model.CreateRequestDto
 import com.ibra.keytrackerapp.create_request.domain.model.FreeKey
+import com.ibra.keytrackerapp.create_request.domain.repository.CreateRequestRepository
 import java.time.LocalDate
 
-class CreateRequestUseCase {
+class CreateRequestUseCase(
+    private val createRequestRepository: CreateRequestRepository,
+    private val tokenUseCase: TokenUseCase
+) {
+    suspend fun getFreeKeys(date: String, pairNumber : Int, repeatedCount : Int) : List<FreeKey> {
+        val token = "Bearer ${tokenUseCase.getTokenFromLocalStorage()}"
+        return createRequestRepository.getFreeKeys(token, date, pairNumber, repeatedCount)
+    }
+
+    suspend fun createRequest(request : CreateRequestDto) {
+        val token = "Bearer ${tokenUseCase.getTokenFromLocalStorage()}"
+        createRequestRepository.createRequest(token, request)
+    }
 
     // Получение списка дней для быстрого выбора
     fun getDatesRow(selectedDate: LocalDate) : List<LocalDate> {

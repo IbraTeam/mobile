@@ -131,6 +131,12 @@ fun CreateRequestButton(
             onClick = {
                 if (isSelected) {
                     viewModel.onSendRequestButtonClick()
+
+                    navController.navigate(Screen.RequestsScreen.name) {
+                        popUpTo(Screen.RequestsScreen.name) {
+                            inclusive = true
+                        }
+                    }
                 }
                 else {
                     if (!navController.popBackStack(Screen.CreateRequestScreen.name, false)){

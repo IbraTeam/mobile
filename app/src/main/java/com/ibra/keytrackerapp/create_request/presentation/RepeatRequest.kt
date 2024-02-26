@@ -80,7 +80,7 @@ fun RepeatRequest(
 
             placeholder = {
                 Text(
-                    text = "100",
+                    text = "10",
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Light,

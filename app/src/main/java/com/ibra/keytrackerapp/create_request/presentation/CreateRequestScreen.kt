@@ -1,17 +1,28 @@
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
+
 package com.ibra.keytrackerapp.create_request.presentation
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,22 +42,50 @@ import com.ibra.keytrackerapp.key_requests.presentation.BottomNavBar
 // Экран создания заявки
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CreateRequestScreen(navController: NavHostController)
+fun CreateRequestScreen(
+    navController: NavHostController,
+    viewModel: CreateRequestViewModel = hiltViewModel()
+)
 {
     Scaffold(
         bottomBar = {
             BottomNavBar(navController = navController)
         }
     ) {
-        Column {
-            CreateRequestLabel(navController)
-            DateSelection()
-            PairSelection()
-            RepeatRequest()
-            RoomSelection()
+        CompositionLocalProvider(
+            LocalOverscrollConfiguration provides null
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(0.dp, 0.dp, 0.dp, 78.dp)
+                    .verticalScroll(
+                        state = rememberScrollState()
+                    )
+            ) {
+                CreateRequestLabel(navController)
+                DateSelection()
+
+                Box {
+                    val vmValues by viewModel.uiState.collectAsState()
+
+                    Column {
+                        PairSelection()
+                        RepeatRequest()
+                        RoomSelection()
+                    }
+
+                    if (vmValues.isPairSelecting)
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(106.dp, 150.dp, 0.dp, 0.dp)
+                        ){
+                            PairsList()
+                        }
+                }
+            }
         }
     }
-
 }
 
 // Заголовок экрана создания заявки
