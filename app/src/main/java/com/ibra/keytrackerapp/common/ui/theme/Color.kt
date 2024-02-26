@@ -22,3 +22,12 @@ val LightBlueColor = Color(0xFFF0F0FF)
 
 val GreenColor = Color(0xFF2AFF8C)
 val RedColor = Color(0xFFFF3A2D)
+
+val DarkerGrayColor = Color(0xFF4A4A4A)
+val VeryLightGray = Color(0xFFF1F5F9)
+
+val PairSelectionTextColor = Color(0xFFA3A3A3)
+val PairTimeColor = Color(0xFF1E293B)
+val RepeatBgColor = Color(0xFFF2F3F7)
+val RepeatPlaceholderColor = Color(0xFFBCBBC1)
+val RoomBgColor = Color(0xFFF6F6F6)

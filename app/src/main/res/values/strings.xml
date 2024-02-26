@@ -48,4 +48,9 @@
     <string name="wrong_length_password">Пароль должен быть от 6 до 20 символов</string>
     <string name="wrong_used_data">Пользователь с такой почтой уже существует</string>
     <string name="input_name">Введите имя</string>
+    <string name="cancel_create_request">Отмена</string>
+    <string name="create_request_label">Сделаем запрос\nна бронирование\nключа</string>
+    <string name="select_a_date">Выберите дату</string>
+    <string name="another">Другой</string>
+    <string name="day">день</string>
 </resources>

@@ -49,7 +49,7 @@ fun RequestsScreen(
 ) {
     val vmValues by viewModel.uiState.collectAsState()
 
-    if (vmValues.profile != null){
+    if (vmValues.userRequests != null){
         Scaffold(
             bottomBar = {
                 BottomNavBar(navController = navController)
