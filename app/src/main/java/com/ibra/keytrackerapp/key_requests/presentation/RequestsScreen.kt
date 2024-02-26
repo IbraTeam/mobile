@@ -2,9 +2,11 @@ package com.ibra.keytrackerapp.key_requests.presentation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,14 +33,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.R
 import com.ibra.keytrackerapp.common.navigation.Screen
-import com.ibra.keytrackerapp.common.profile.domain.model.Profile
-import com.ibra.keytrackerapp.common.profile.domain.storage.ProfileStorage
-import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
 import com.ibra.keytrackerapp.common.ui.theme.Pink
 import com.ibra.keytrackerapp.common.ui.theme.PinkOutlineColor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 // Экран заявок пользователя
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -55,10 +51,15 @@ fun RequestsScreen(
                 BottomNavBar(navController = navController)
             }
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .background(Color.White)
+            ) {
                 Greeting(navController)
                 CurrentWeek()
                 RequestsList()
+                Spacer(modifier = Modifier.weight(1f))
+                BottomNavBar(navController = navController)
             }
         }
     }
