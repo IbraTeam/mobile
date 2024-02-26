@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class,
+    ExperimentalFoundationApi::class
+)
 
 package com.ibra.keytrackerapp.create_request.presentation
 
@@ -11,6 +13,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,6 +54,7 @@ fun CreateRequestScreen(
 )
 {
     Scaffold(
+        Modifier.background(Color.White),
         bottomBar = {
             BottomNavBar(navController = navController)
         }
@@ -59,10 +64,11 @@ fun CreateRequestScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(0.dp, 0.dp, 0.dp, 78.dp)
+                    .padding(0.dp, 0.dp, 0.dp, 0.dp)
                     .verticalScroll(
                         state = rememberScrollState()
                     )
+                    .fillMaxHeight()
                     .background(Color.White)
             ) {
                 CreateRequestLabel(navController)
@@ -86,6 +92,8 @@ fun CreateRequestScreen(
                             PairsList()
                         }
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
