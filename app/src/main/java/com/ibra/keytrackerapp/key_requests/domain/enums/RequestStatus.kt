@@ -4,5 +4,6 @@ package com.ibra.keytrackerapp.key_requests.domain.enums
 enum class RequestStatus {
     Accepted,
     Pending,
-    Rejected
+    Rejected,
+    Issued
 }
