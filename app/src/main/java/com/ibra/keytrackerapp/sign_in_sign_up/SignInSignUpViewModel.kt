@@ -27,6 +27,9 @@ class SignInSignUpViewModel @Inject constructor(
     init {
         checkTokenValid()
         updateUserProfile()
+        _uiState.update { currentState ->
+            currentState.copy(isScreenUpdated = true)
+        }
     }
 
     private fun updateUserProfile() {
@@ -70,5 +73,6 @@ class SignInSignUpViewModel @Inject constructor(
 
 data class LaunchUIState(
     val token: String = "",
-    val isTokenExpired: Boolean = true
+    val isTokenExpired: Boolean = true,
+    val isScreenUpdated: Boolean = false
 )

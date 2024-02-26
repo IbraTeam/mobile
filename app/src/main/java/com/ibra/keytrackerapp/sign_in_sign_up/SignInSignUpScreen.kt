@@ -47,17 +47,10 @@ fun SignInSignUpScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        if (uiState.isTokenExpired) {
-            navController.navigate(Screen.SignInSignUpScreen.name){
-                navController.popBackStack()
-            }
-        } else {
-            navController.navigate(Screen.RequestsScreen.name) {
-                navController.popBackStack()
-            }
+    LaunchedEffect(uiState.isScreenUpdated) {
+        if (!uiState.isTokenExpired) {
+            navController.navigate(Screen.RequestsScreen.name)
         }
-
     }
 
 
