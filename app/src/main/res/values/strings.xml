@@ -63,5 +63,6 @@
     <string name="requetst">Заявки</string>
     <string name="send_request">Отправить заявку</string>
     <string name="make_request">Создать заявку</string>
+    <string name="username">Юзернейм</string>
 
 </resources>

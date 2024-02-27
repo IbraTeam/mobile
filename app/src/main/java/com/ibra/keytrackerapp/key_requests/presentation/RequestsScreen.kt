@@ -80,7 +80,11 @@ fun Greeting(
         Text(
             modifier = Modifier
                 .padding(24.dp, 56.dp, 16.dp, 0.dp),
-            text = stringResource(id = R.string.greeting) + vmValues.profile?.name,
+            text = stringResource(id = R.string.greeting) +
+                    if (vmValues.profile == null )
+                        stringResource(id = R.string.username)
+                    else
+                        vmValues.profile?.name,
             style = TextStyle(
                 fontSize = 28.sp,
                 fontWeight = FontWeight.SemiBold
