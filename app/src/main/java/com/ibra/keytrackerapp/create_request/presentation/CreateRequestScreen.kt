@@ -64,7 +64,7 @@ fun CreateRequestScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(0.dp, 0.dp, 0.dp, 0.dp)
+                    .padding(0.dp, 0.dp, 0.dp, 78.dp)
                     .verticalScroll(
                         state = rememberScrollState()
                     )

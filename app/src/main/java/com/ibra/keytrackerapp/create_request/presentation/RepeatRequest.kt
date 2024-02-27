@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -47,7 +48,7 @@ fun RepeatRequest(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(0.dp, 0.dp, 10.dp, 0.dp),
-            text = "Создать заявку на",
+            text = stringResource(id = R.string.make_request_to),
             style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium
@@ -80,7 +81,7 @@ fun RepeatRequest(
 
             placeholder = {
                 Text(
-                    text = "10",
+                    text = stringResource(id = R.string.weeks_placeholder),
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Light,
@@ -114,7 +115,7 @@ fun RepeatRequest(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(10.dp, 0.dp, 0.dp, 0.dp),
-            text = "недель",
+            text = stringResource(id = R.string.weeks),
             style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium

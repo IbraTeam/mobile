@@ -48,9 +48,9 @@ fun SignInSignUpScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState.isScreenUpdated) {
-        if (!uiState.isTokenExpired) {
+        /*if (!uiState.isTokenExpired) {
             navController.navigate(Screen.RequestsScreen.name)
-        }
+        }*/
     }
 
 

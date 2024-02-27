@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -82,7 +84,7 @@ fun RequestElement(navController: NavHostController)
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
-            text = "Заявки",
+            text = stringResource(id = R.string.requetst),
             style = TextStyle(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
@@ -121,6 +123,7 @@ fun CreateRequestButton(
         Button(
             modifier = Modifier
                 .height(56.dp)
+                .width(200.dp)
                 .padding(16.dp, 0.dp, 16.dp, 8.dp)
                 .clip(shape = RoundedCornerShape(30.dp))
                 .background(brush = Brush.horizontalGradient(colors = listOf(Pink, LightPink))),
@@ -155,7 +158,10 @@ fun CreateRequestButton(
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
-                text = if (isSelected) "Отправить заявку" else "Создать заявку",
+                text = if (isSelected)
+                    stringResource(id = R.string.send_request)
+                else
+                    stringResource(id = R.string.make_request),
                 style = TextStyle(
                     fontSize = 14.sp,
                     color = Color.White,
@@ -165,7 +171,6 @@ fun CreateRequestButton(
             )
         }
     }
-
 }
 
 // Кнопка "Ключи"
@@ -179,12 +184,11 @@ fun KeysElement(navController: NavHostController)
             .padding(0.dp, 16.dp, 24.dp, 8.dp)
             .clip(shape = RoundedCornerShape(8.dp))
             .clickable {
-                if (!navController.popBackStack(Screen.KeyTracker.name, false)){
+                if (!navController.popBackStack(Screen.KeyTracker.name, false)) {
                     navController.navigate(Screen.KeyTracker.name) {
                         popUpTo(Screen.RequestsScreen.name)
                     }
-                }
-                else{
+                } else {
                     while (navController.currentBackStackEntry?.destination?.route != Screen.KeyTracker.name) {
                         navController.popBackStack()
                     }
@@ -194,7 +198,7 @@ fun KeysElement(navController: NavHostController)
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
-            text = "Ключи",
+            text = stringResource(id = R.string.keys),
             style = TextStyle(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
