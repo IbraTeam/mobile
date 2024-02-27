@@ -61,6 +61,8 @@ fun RequestsList(
         LocalOverscrollConfiguration provides null
     ) {
         LazyColumn(
+            modifier = Modifier
+                .padding(0.dp, 0.dp, 0.dp, 78.dp),
             state = rememberLazyListState()
         ) {
             item{
