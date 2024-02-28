@@ -1,13 +1,14 @@
 package com.ibra.keytrackerapp.common.keytrack.data.repository
 
 import com.ibra.keytrackerapp.common.keytrack.data.service.KeyTrackApiService
-import com.ibra.keytrackerapp.common.keytrack.domain.model.KeysResponse
+import com.ibra.keytrackerapp.common.keytrack.domain.model.KeyDto
+import com.ibra.keytrackerapp.common.keytrack.domain.model.PeopleResponse
 import com.ibra.keytrackerapp.common.keytrack.domain.repository.KeyTrackRepository
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 
 class KeyTrackRepositoryImpl(private val keyTrackApiService: KeyTrackApiService) : KeyTrackRepository {
-    override suspend fun getKeys(token: String): Response<KeysResponse?> {
+    override suspend fun getKeys(token: String): Response<List<KeyDto>> {
         return try {
             val response = keyTrackApiService.getKeys("Bearer $token")
             if (response.isSuccessful) {
@@ -70,6 +71,19 @@ class KeyTrackRepositoryImpl(private val keyTrackApiService: KeyTrackApiService)
         }
     }
 
+    override suspend fun getPeople(token: String, page: Int, name: String?) : Response<PeopleResponse> {
+        return try {
+            val response = keyTrackApiService.getPersons("Bearer $token", page, name)
+            if (response.isSuccessful) {
+                Response.success(response.body())
+            } else {
+                Response.error(response.code(), response.errorBody()!!)
+            }
+        } catch (e: Exception) {
+            Response.error(500, e.message!!.toResponseBody())
+        }
+    }
+
 
     private fun <T> handleResponse(response: Response<T>): Response<T> {
         return if (response.isSuccessful) {
@@ -78,6 +92,5 @@ class KeyTrackRepositoryImpl(private val keyTrackApiService: KeyTrackApiService)
             Response.error(response.code(), response.errorBody()!!)
         }
     }
-
 
 }

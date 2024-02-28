@@ -1,6 +1,7 @@
 package com.ibra.keytrackerapp.common.keytrack.data.service
 
-import com.ibra.keytrackerapp.common.keytrack.domain.model.KeysResponse
+import com.ibra.keytrackerapp.common.keytrack.domain.model.KeyDto
+import com.ibra.keytrackerapp.common.keytrack.domain.model.PeopleResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -8,12 +9,13 @@ import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface KeyTrackApiService {
     @GET("/api/audience-key")
     suspend fun getKeys(
         @Header("Authorization") token: String
-    ): Response<KeysResponse>
+    ): Response<List<KeyDto>>
 
     @PATCH("/api/audience-key/give/{userId}")
     suspend fun giveKey(
@@ -51,4 +53,11 @@ interface KeyTrackApiService {
         @Header("Authorization") token: String,
         @Path("keyId") keyId: String
     ): Response<Unit>
+
+    @GET("/api/account/users")
+    suspend fun getPersons(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int,
+        @Query("name") name: String?
+    ): Response<PeopleResponse>
 }
