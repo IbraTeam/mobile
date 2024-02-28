@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 
@@ -35,15 +36,17 @@ class SignInSignUpViewModel @Inject constructor(
     private fun updateUserProfile() {
         viewModelScope.launch(Dispatchers.Default) {
             try{
-                if (!_uiState.value.isTokenExpired){
-                    val result = profileUseCase.getProfile(_uiState.value.token)
-                    val profile = result.body()
-                    if (result.isSuccessful && profile != null){
-                        profileUseCase.setProfileToLocalStorage(profile)
-                    } else{
-                        profileUseCase.deleteProfileFromLocalStorage()
-                    }
+                withTimeout(2000) {
+                    if (!_uiState.value.isTokenExpired) {
+                        val result = profileUseCase.getProfile(_uiState.value.token)
+                        val profile = result.body()
+                        if (result.isSuccessful && profile != null) {
+                            profileUseCase.setProfileToLocalStorage(profile)
+                        } else {
+                            profileUseCase.deleteProfileFromLocalStorage()
+                        }
 
+                    }
                 }
             } catch (e: Exception){
                 profileUseCase.deleteProfileFromLocalStorage()
@@ -55,17 +58,20 @@ class SignInSignUpViewModel @Inject constructor(
 
     private fun checkTokenValid() {
         viewModelScope.launch(Dispatchers.Default) {
-            val token = tokenUseCase.getTokenFromLocalStorage()
-            val isTokenExpired = tokenUseCase.isTokenExpired(token)
-            _uiState.update { currentState ->
-                currentState.copy(
-                    token = if (isTokenExpired) "" else token,
-                    isTokenExpired = isTokenExpired
-                )
+            withTimeout(2000) {
+                val token = tokenUseCase.getTokenFromLocalStorage()
+                val isTokenExpired = tokenUseCase.isTokenExpired(token)
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        token = if (isTokenExpired) "" else token,
+                        isTokenExpired = isTokenExpired
+                    )
+                }
+                if (isTokenExpired) {
+                    tokenUseCase.deleteTokenFromLocalStorage()
+                }
             }
-            if (isTokenExpired) {
-                tokenUseCase.deleteTokenFromLocalStorage()
-            }
+
         }
 
     }
