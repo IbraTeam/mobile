@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,9 +39,6 @@ import com.ibra.keytrackerapp.common.ui.theme.LightPink
 import com.ibra.keytrackerapp.common.ui.theme.Pink
 import com.ibra.keytrackerapp.create_request.presentation.CreateRequestViewModel
 
-data class NavBarItem(
-    val element : () -> Unit
-)
 
 @Composable
 fun BottomNavBar(
@@ -179,16 +175,7 @@ fun KeysElement(navController: NavHostController)
             .padding(0.dp, 16.dp, 24.dp, 8.dp)
             .clip(shape = RoundedCornerShape(8.dp))
             .clickable {
-                if (!navController.popBackStack(Screen.KeyTracker.name, false)){
-                    navController.navigate(Screen.KeyTracker.name) {
-                        popUpTo(Screen.RequestsScreen.name)
-                    }
-                }
-                else{
-                    while (navController.currentBackStackEntry?.destination?.route != Screen.KeyTracker.name) {
-                        navController.popBackStack()
-                    }
-                }
+                navController.navigate(Screen.KeyTracker.name)
             }
     ) {
         Text(
