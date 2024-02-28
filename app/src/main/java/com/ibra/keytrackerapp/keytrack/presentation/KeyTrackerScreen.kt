@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -50,6 +51,7 @@ import com.ibra.keytrackerapp.common.ui.component.ExitButton
 import com.ibra.keytrackerapp.common.ui.theme.light12
 import com.ibra.keytrackerapp.common.ui.theme.semiBold16
 import com.ibra.keytrackerapp.common.ui.theme.semiBold24
+import com.ibra.keytrackerapp.key_requests.presentation.BottomNavBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,8 +64,13 @@ fun KeyTrackerScreen(
     val uiState by viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyGridState()
     val sheetState = rememberModalBottomSheetState()
+    val lazyListState = rememberLazyListState()
 
-
+    LaunchedEffect(lazyListState.layoutInfo.visibleItemsInfo){
+        if (lazyListState.isScrollInProgress){
+            viewModel.onPersonListScrolledToEnd(lazyListState)
+        }
+    }
 
     LaunchedEffect(uiState.isLogout) {
         if (uiState.isLogout) {
@@ -80,7 +87,7 @@ fun KeyTrackerScreen(
     }
 
     Scaffold(
-        modifier = modifier
+        bottomBar = { BottomNavBar(navController = navController) }, modifier = modifier
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -102,7 +109,10 @@ fun KeyTrackerScreen(
                     style = semiBold24,
                     textAlign = TextAlign.Start
                 )
-                ExitButton(onClick = { viewModel.onExitButtonPressed() })
+                ExitButton(onClick = {
+                    navController.navigate(Screen.SignInSignUpScreen.name)
+                    viewModel.onExitButtonPressed()
+                })
             }
             Text(text = stringResource(R.string.your_keys), style = semiBold16)
             LazyVerticalGrid(
@@ -112,13 +122,13 @@ fun KeyTrackerScreen(
                 verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
                 state = lazyGridState
             ) {
-                items(uiState.keyDtoList.size) { index ->
-                    val keyDto = uiState.keyDtoList[index]
+                items(uiState.keys.size) { index ->
+                    val keyDto = uiState.keys[index]
                     KeyCard(data = keyDto, firstOnClick = {
+                        viewModel.onFirstButtonPressed(keyDto)
                         if (keyDto.transferStatus == TransferStatus.ON_HANDS) {
                             viewModel.onSheetExpanded()
                         }
-                        viewModel.onFirstButtonPressed(keyDto)
                     }, secondOnClick = { viewModel.onSecondButtonPressed(keyDto) })
                 }
             }
@@ -131,22 +141,21 @@ fun KeyTrackerScreen(
                 modifier = Modifier.fillMaxWidth(),
                 containerColor = colorResource(id = R.color.light_blue)
             ) {
-                MyTextField(uiState.personName, viewModel::onPersonNameChanged)
+                MyTextField(uiState.personName, viewModel::onFieldChanged)
                 LazyColumn(
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.Start,
+                    state = lazyListState
                 ) {
-                    items(uiState.personList.size) { index ->
-                        val person = uiState.personList[index]
+                    items(uiState.people.size) { index ->
+                        val person = uiState.people[index]
                         PersonCard(text = person.name, onClick = {
+                            viewModel.onPersonSelected(person.id)
                             viewModel.onSheetDismissed()
-                            viewModel.onPersonSelected(person.id, uiState.transferKeyId)
                         })
                     }
                 }
             }
         }
-
-
     }
 }
 
@@ -223,7 +232,6 @@ fun RowWithIcon(text: String, painter: Painter) {
         }
         Text(text = text, style = light12)
     }
-
 }
 
 @Composable
@@ -239,14 +247,13 @@ fun getBackgroundColor(type: TransferStatus): Color {
 @Composable
 fun getKeyCardData(type: TransferStatus, isFirstButton: Boolean): KeyCardButtonData? {
     return when {
-        !isFirstButton && type == TransferStatus.ON_HANDS -> {
+        !isFirstButton && (type == TransferStatus.ON_HANDS || type == TransferStatus.OFFERING_TO_YOU) -> {
             KeyCardButtonData(
                 icon = getSecondIconFromType(type)!!,
                 text = getSecondButtonText(type)!!,
                 color = getSecondButtonColor(type)!!
             )
         }
-
         isFirstButton -> {
             KeyCardButtonData(
                 icon = getFirstIconFromType(type),
@@ -254,8 +261,6 @@ fun getKeyCardData(type: TransferStatus, isFirstButton: Boolean): KeyCardButtonD
                 color = getFirstButtonColor(type)
             )
         }
-
-
         else -> null
     }
 }
@@ -337,7 +342,6 @@ fun getTextFromType(type: TransferStatus): String {
             TransferStatus.OFFERING_TO_YOU -> R.string.offer_key
         }
     )
-
 }
 
 
