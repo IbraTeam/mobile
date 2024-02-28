@@ -1,5 +1,8 @@
 package com.ibra.keytrackerapp.common.enums
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class PairNumber(val text: String) {
     First("8:45-10:20"),
     Second("10:35-12:10"),

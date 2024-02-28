@@ -22,12 +22,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ibra.keytrackerapp.R
+import com.ibra.keytrackerapp.common.enums.TransferStatus
 import com.ibra.keytrackerapp.common.keytrack.data.KeyCardData
 import com.ibra.keytrackerapp.common.keytrack.domain.model.KeyDto
 import com.ibra.keytrackerapp.common.ui.component.CardButton
 import com.ibra.keytrackerapp.common.ui.theme.medium12
 import com.ibra.keytrackerapp.common.ui.theme.medium18
-import java.time.LocalDateTime
 
 
 @Composable
@@ -102,13 +102,13 @@ fun KeyCard(
                     .fillMaxWidth()
                     .padding(start = 10.dp)
             )
-            RowWithIcon(text = data.room, painter = painterResource(R.drawable.destination))
+            RowWithIcon(text = data.room ?: "", painter = painterResource(R.drawable.destination))
             RowWithIcon(
-                text = getDateString(data.dateTime),
+                text = data.dateTime ?: "",
                 painter = painterResource(R.drawable.date_range)
             )
-            RowWithIcon(text = data.pairNumber.text, painter = painterResource(R.drawable.time))
-            if (keyCardData.personIcon != null) {
+            RowWithIcon(text = data.pairNumber?.text ?: "", painter = painterResource(R.drawable.time))
+            if (data.transferStatus == TransferStatus.ON_HANDS && keyCardData.personIcon != null) {
                 RowWithIcon(text = data.userName ?: "", painter = keyCardData.personIcon)
             }
         }
@@ -125,25 +125,5 @@ fun KeyCard(
                 )
             }
         }
-    }
-}
-
-
-fun getDateString(date: LocalDateTime): String {
-    return date.dayOfMonth.toString() + " " + when (date.monthValue) {
-        1 -> "января"
-        2 -> "февраля"
-        3 -> "марта"
-        4 -> "апреля"
-        5 -> "мая"
-        6 -> "июня"
-        7 -> "июля"
-        8 -> "августа"
-        9 -> "сентября"
-        10 -> "октября"
-        11 -> "ноября"
-        12 -> "декабря"
-        else -> ""
-
     }
 }

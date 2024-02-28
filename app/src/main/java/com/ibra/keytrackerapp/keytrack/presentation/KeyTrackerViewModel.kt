@@ -1,18 +1,24 @@
 package com.ibra.keytrackerapp.keytrack.presentation
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ibra.keytrackerapp.common.auth.domain.usecase.LogoutUserUseCase
 import com.ibra.keytrackerapp.common.enums.TransferStatus
 import com.ibra.keytrackerapp.common.keytrack.domain.model.KeyDto
+import com.ibra.keytrackerapp.common.keytrack.domain.model.PagePaginationDto
 import com.ibra.keytrackerapp.common.keytrack.domain.usecase.KeyTrackUseCases
 import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
 import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,7 +29,7 @@ class KeyTrackerViewModel @Inject constructor(
     private val keyTrackUseCases: KeyTrackUseCases,
     private val tokenUseCase: TokenUseCase,
     private val profileUseCase: ProfileUseCase,
-    private val logoutUserUseCase: LogoutUserUseCase
+    private val logoutUserUseCase: LogoutUserUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(KeyTrackerUiState())
@@ -35,7 +41,7 @@ class KeyTrackerViewModel @Inject constructor(
     }
 
     private fun initViewModel() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Default) {
             try {
                 val token = tokenUseCase.getTokenFromLocalStorage()
                 val isTokenExpired = tokenUseCase.isTokenExpired(token)
@@ -53,70 +59,89 @@ class KeyTrackerViewModel @Inject constructor(
     }
 
 
-
     fun onExitButtonPressed() {
         viewModelScope.launch(Dispatchers.Default) {
-            logoutUserUseCase.execute(tokenUseCase.getTokenFromLocalStorage())
+            val token = tokenUseCase.getTokenFromLocalStorage()
+            logoutUserUseCase.execute("Bearer $token")
             tokenUseCase.deleteTokenFromLocalStorage()
             profileUseCase.deleteProfileFromLocalStorage()
+        }
+    }
+
+    fun onFirstButtonPressed(keyDto: KeyDto) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val token = getTokenIfNotExpired()
+
+            when (keyDto.transferStatus) {
+                TransferStatus.OFFERING_TO_YOU -> keyTrackUseCases.rejectKey(
+                    token, keyDto.keyId
+                )
+
+                TransferStatus.IN_DEAN -> keyTrackUseCases.getKey(token, keyDto.keyId)
+                else -> {}
+            }
             _uiState.update { currentState ->
-                currentState.copy(isLogout = true)
+                currentState.copy(
+                    transferKeyId = if (keyDto.transferStatus == TransferStatus.ON_HANDS) keyDto.keyId else ""
+                )
             }
+            updateKeysList(token)
         }
+
     }
 
-    fun onFirstButtonPressed(keyCardDto: KeyDto) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val token = tokenUseCase.getTokenFromLocalStorage()
+    private suspend fun getTokenIfNotExpired(): String {
+        val token = tokenUseCase.getTokenFromLocalStorage()
+        if (tokenUseCase.isTokenExpired(token)) {
+            handleExpiredToken(token)
+        }
+        return token
+    }
 
-            val response = when (keyCardDto.transferStatus) {
-                TransferStatus.OFFERING_TO_YOU -> keyTrackUseCases.rejectKey(token, keyCardDto.id)
-                TransferStatus.IN_DEAN -> keyTrackUseCases.getKey(token, keyCardDto.id)
-                TransferStatus.TRANSFERRING -> keyTrackUseCases.cancelKey(token, keyCardDto.id)
+    fun onSecondButtonPressed(keyDto: KeyDto) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val token = getTokenIfNotExpired()
+            val response = when (keyDto.transferStatus) {
+                TransferStatus.ON_HANDS -> keyTrackUseCases.returnKey(token, keyDto.keyId)
+                TransferStatus.OFFERING_TO_YOU -> keyTrackUseCases.acceptKey(
+                    token, keyDto.keyId
+                )
+                TransferStatus.TRANSFERRING -> keyTrackUseCases.cancelKey(
+                    token, keyDto.keyId
+                )
+
                 else -> null
             }
             if (response?.isSuccessful == true) {
-                val newKeys = getKeyCardList()
-                _uiState.update { currentState ->
-                    currentState.copy(keyDtoList = newKeys)
-                }
+                updateKeysList(token)
             }
         }
     }
 
-    fun onSecondButtonPressed(keyCardDto: KeyDto) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val token = tokenUseCase.getTokenFromLocalStorage()
-            val response = when (keyCardDto.transferStatus) {
-                TransferStatus.ON_HANDS -> keyTrackUseCases.returnKey(token, keyCardDto.id)
-                TransferStatus.OFFERING_TO_YOU -> keyTrackUseCases.acceptKey(token, keyCardDto.id)
-                else -> null
-            }
-            if (response?.isSuccessful == true) {
-                val newKeys = getKeyCardList()
-                _uiState.update { currentState ->
-                    currentState.copy(keyDtoList = newKeys)
-                }
-
-            }
+    private suspend fun updateKeysList(token: String) {
+        val newKeys = getKeys(token)
+        _uiState.update { currentState ->
+            currentState.copy(keys = newKeys)
         }
     }
-
-
 
 
     private suspend fun handleValidToken(token: String) {
         val profileResponse = profileUseCase.getProfile(token)
-
         val profile = profileResponse.body()
-        profile?.let {
-            val keyCardList = getKeyCardList()
-            _uiState.update { currentState ->
-                currentState.copy(
-                    keyDtoList = keyCardList,
-                    personName = if (profileResponse.isSuccessful) profile.name else ""
-                )
-            }
+        val keys = getKeys(token)
+
+        val peopleResponse = keyTrackUseCases.getPeople(token, 1, null)
+        val personList = peopleResponse.body()?.users ?: emptyList()
+        val pagination = peopleResponse.body()?.page ?: PagePaginationDto()
+        _uiState.update { currentState ->
+            currentState.copy(
+                isLogout = false,
+                keys = keys,
+                personName = profile?.name ?: "",
+                people = personList,
+                pagination = pagination
+            )
         }
     }
 
@@ -131,12 +156,34 @@ class KeyTrackerViewModel @Inject constructor(
         }
     }
 
+    fun onPersonListScrolledToEnd(lazyListState: LazyListState) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val lastItemIndex = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val itemCount = lazyListState.layoutInfo.totalItemsCount
+            if (lastItemIndex >= itemCount - 3) {
+                val token = getTokenIfNotExpired()
+                val currentPagination = _uiState.value.pagination
+                if (currentPagination.currentPage < currentPagination.totalPages) {
+                    val peopleResponse = keyTrackUseCases.getPeople(
+                        token, currentPagination.currentPage + 1, _uiState.value.personName
+                    )
 
+                    val newPeople = _uiState.value.people + peopleResponse.body()?.users.orEmpty()
+                    val pagination = peopleResponse.body()?.page ?: PagePaginationDto()
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            people = newPeople, pagination = pagination
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     fun onSheetDismissed() {
         viewModelScope.launch(Dispatchers.Default) {
             _uiState.update { currentState ->
-                currentState.copy(isSheetVisible = false, transferKeyId = "")
+                currentState.copy(isSheetVisible = false, personName = "")
             }
         }
     }
@@ -144,38 +191,62 @@ class KeyTrackerViewModel @Inject constructor(
     fun onSheetExpanded() {
         viewModelScope.launch(Dispatchers.Default) {
             _uiState.update { currentState ->
-                currentState.copy(isSheetVisible = true)
+                currentState.copy(isSheetVisible = true, personName = "")
             }
         }
     }
 
-    fun onPersonSelected(keyId: String, userId: String) {
+    fun onPersonSelected(userId: String) {
         viewModelScope.launch(Dispatchers.Default) {
-            val giveKeyResponse = keyTrackUseCases.giveKey(tokenUseCase.getTokenFromLocalStorage(), userId, keyId)
+            val giveKeyResponse = keyTrackUseCases.giveKey(
+                getTokenIfNotExpired(), userId, _uiState.value.transferKeyId
+            )
             if (giveKeyResponse.isSuccessful) {
-                val keyCardList = _uiState.value.keyDtoList.filter { it.id != keyId }
+                val keyCardList =
+                    _uiState.value.keys.filter { it.keyId != _uiState.value.transferKeyId }
                 _uiState.update { currentState ->
-                    currentState.copy(isSheetVisible = false, keyDtoList = keyCardList)
+                    currentState.copy(isSheetVisible = false, keys = keyCardList)
                 }
             }
         }
     }
 
-
-    private suspend fun getKeyCardList(): List<KeyDto> {
-        val getKeysResponse = keyTrackUseCases.getKeys(tokenUseCase.getTokenFromLocalStorage())
-        return if (getKeysResponse.isSuccessful && getKeysResponse.body() != null)
-            getKeysResponse.body()!!.keys
-            else _uiState.value.keyDtoList
+    private suspend fun getKeys(token: String): List<KeyDto> {
+        return try {
+            val getKeysResponse = keyTrackUseCases.getKeys(token)
+            if (getKeysResponse.isSuccessful && getKeysResponse.body() != null) getKeysResponse.body()!!
+            else _uiState.value.keys
+        } catch (e: Exception) {
+            _uiState.value.keys
+        }
     }
 
-    fun onPersonNameChanged(newPersonName: String) {
-        viewModelScope.launch(Dispatchers.Default) {
+    @OptIn(FlowPreview::class)
+    fun onFieldChanged(newValue: Any) {
+        viewModelScope.launch {
+            val valueFlow = flowOf(newValue as String).debounce(300).distinctUntilChanged()
+            valueFlow.collect { newPersonName ->
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        personName = newPersonName,
+                    )
+                }
+            }
+            val token = getTokenIfNotExpired()
+            val newPeople = keyTrackUseCases.getPeople(
+                token, 1, _uiState.value.personName
+            )
+
             _uiState.update { currentState ->
-                currentState.copy(personName = newPersonName)
+                currentState.copy(
+                    people = newPeople.body()?.users ?: emptyList(),
+                    pagination = newPeople.body()?.page ?: PagePaginationDto()
+                )
             }
         }
     }
+
+
 }
 
 
