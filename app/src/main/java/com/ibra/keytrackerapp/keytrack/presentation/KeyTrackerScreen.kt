@@ -115,23 +115,35 @@ fun KeyTrackerScreen(
                 })
             }
             Text(text = stringResource(R.string.your_keys), style = semiBold16)
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = modifier.padding(start = 16.dp, end = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally),
-                verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
-                state = lazyGridState
-            ) {
-                items(uiState.keys.size) { index ->
-                    val keyDto = uiState.keys[index]
-                    KeyCard(data = keyDto, firstOnClick = {
-                        viewModel.onFirstButtonPressed(keyDto)
-                        if (keyDto.transferStatus == TransferStatus.ON_HANDS) {
-                            viewModel.onSheetExpanded()
-                        }
-                    }, secondOnClick = { viewModel.onSecondButtonPressed(keyDto) })
+            if (uiState.keys.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = stringResource(R.string.no_keys), style = semiBold16)
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = modifier.padding(start = 16.dp, end = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally),
+                    verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
+                    state = lazyGridState
+                ) {
+                    items(uiState.keys.size) { index ->
+                        val keyDto = uiState.keys[index]
+                        KeyCard(data = keyDto, firstOnClick = {
+                            viewModel.onFirstButtonPressed(keyDto)
+                            if (keyDto.transferStatus == TransferStatus.ON_HANDS) {
+                                viewModel.onSheetExpanded()
+                            }
+                        }, secondOnClick = { viewModel.onSecondButtonPressed(keyDto) })
+                    }
                 }
             }
+
         }
 
         if (uiState.isSheetVisible) {

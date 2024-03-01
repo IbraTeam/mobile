@@ -50,11 +50,13 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-   /* LaunchedEffect(uiState.isButtonPressed) {
-        if (uiState.isButtonPressed) {
-            navController.navigate(Screen.KeyTracker.name)
+   LaunchedEffect(uiState.isButtonPressed) {
+        if (!uiState.isMainErrorShown && uiState.isButtonPressed) {
+            navController.navigate(Screen.RequestsScreen.name) {
+                navController.popBackStack()
+            }
         }
-    }*/
+    }
 
     Scaffold(
         modifier = modifier
@@ -88,11 +90,7 @@ fun LoginScreen(
                     navController.popBackStack()
                 }
             }, onButtonClick = {
-                viewModel.onButtonPressed(navController)
-
-                /*navController.navigate(Screen.RequestsScreen.name) {
-                    navController.popBackStack()
-                }*/
+                viewModel.onButtonPressed()
             })
         }
     }

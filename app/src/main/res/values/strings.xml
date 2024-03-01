@@ -53,4 +53,5 @@
     <string name="select_a_date">Выберите дату</string>
     <string name="another">Другой</string>
     <string name="day">день</string>
+    <string name="no_keys">Кажется, ключи не найдены</string>
 </resources>

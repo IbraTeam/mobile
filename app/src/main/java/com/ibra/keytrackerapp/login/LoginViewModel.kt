@@ -2,11 +2,9 @@ package com.ibra.keytrackerapp.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.common.auth.data.enum.FieldType
 import com.ibra.keytrackerapp.common.auth.data.mapper.toUserLoginModel
 import com.ibra.keytrackerapp.common.auth.domain.usecase.LoginUserUseCase
-import com.ibra.keytrackerapp.common.navigation.Screen
 import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
 import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
 import com.ibra.keytrackerapp.common.validation.domain.usecase.LoginValidationUseCase
@@ -21,6 +19,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,11 +28,10 @@ class LoginViewModel @Inject constructor(
     private val loginUserUseCase: LoginUserUseCase,
     private val tokenUseCase: TokenUseCase,
     private val profileUseCase: ProfileUseCase
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
-
 
 
     @OptIn(FlowPreview::class)
@@ -56,6 +54,7 @@ class LoginViewModel @Inject constructor(
                         updateErrorAndButtonStateForField()
                     }
                 }
+
                 else -> {}
             }
         }
@@ -102,37 +101,34 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onButtonPressed(navHostController: NavHostController) {
+    fun onButtonPressed() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                val user = _uiState.value.toUserLoginModel()
-                val response = loginUserUseCase.execute(user)
-                val token = response.body()?.token
-                token?.let { tokenUseCase.setTokenToLocalStorage(it) }
-                if (token != null) {
-                    val result = profileUseCase.getProfile(token)
-                    val profile = result.body()
-                    if (result.isSuccessful && profile != null) {
-                        profileUseCase.setProfileToLocalStorage(profile)
+                withTimeout(2000) {
+                    val user = _uiState.value.toUserLoginModel()
+                    val response = loginUserUseCase.execute(user)
+                    val token = response.body()?.token
+                    token?.let { tokenUseCase.setTokenToLocalStorage(it) }
+                    if (token != null) {
+                        val result = profileUseCase.getProfile(token)
+                        val profile = result.body()
+                        if (result.isSuccessful && profile != null) {
+                            profileUseCase.setProfileToLocalStorage(profile)
+                        }
+                        _uiState.update { currentState ->
+                            currentState.copy(
+                                isButtonPressed = true
+                            )
+                        }
+                        return@withTimeout
+                    } else {
+                        handleException()
                     }
-                    _uiState.update { currentState ->
-                        currentState.copy(
-                            isButtonPressed = true
-                        )
-                    }
-                } else {
-                    handleException()
                 }
             } catch (e: Exception) {
                 handleException()
             }
-
-            navHostController.navigate(Screen.RequestsScreen.name) {
-                navHostController.popBackStack()
-            }
         }
-
-
     }
 
 

@@ -62,7 +62,7 @@ class KeyTrackerViewModel @Inject constructor(
     fun onExitButtonPressed() {
         viewModelScope.launch(Dispatchers.Default) {
             val token = tokenUseCase.getTokenFromLocalStorage()
-            logoutUserUseCase.execute("Bearer $token")
+            logoutUserUseCase.execute(token)
             tokenUseCase.deleteTokenFromLocalStorage()
             profileUseCase.deleteProfileFromLocalStorage()
         }
