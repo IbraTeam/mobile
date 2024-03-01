@@ -7,7 +7,7 @@ enum class PairNumber {
     Fourth,
     Fifth,
     Sixth,
-    Sevents,
+    Seventh,
     Eighth,
     Ninth,
     Ten

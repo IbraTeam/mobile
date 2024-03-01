@@ -53,5 +53,16 @@
     <string name="select_a_date">Выберите дату</string>
     <string name="another">Другой</string>
     <string name="day">день</string>
+    <string name="choose_room">Выберите свободную аудиторию</string>
+    <string name="make_request_to">Создать заявку на</string>
+    <string name="weeks_placeholder">10</string>
+    <string name="weeks">недель</string>
+    <string name="pair">пара</string>
+    <string name="select_pair">Выберите пару</string>
+    <string name="your_requests">Ваши заявки</string>
+    <string name="requetst">Заявки</string>
+    <string name="send_request">Отправить заявку</string>
+    <string name="make_request">Создать заявку</string>
+    <string name="username">Юзернейм</string>
     <string name="no_keys">Кажется, ключи не найдены</string>
 </resources>

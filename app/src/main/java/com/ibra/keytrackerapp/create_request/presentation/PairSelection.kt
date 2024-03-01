@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,16 +52,12 @@ import com.ibra.keytrackerapp.common.ui.theme.VeryLightGray
 
 // Выбор пары
 @Composable
-fun PairSelection(
-    viewModel: CreateRequestViewModel = hiltViewModel()
-)
+fun PairSelection()
 {
-    val vmValues by viewModel.uiState.collectAsState()
-
     Text(
         modifier = Modifier
             .padding(24.dp, 36.dp, 24.dp, 0.dp),
-        text = "Выберите пару",
+        text = stringResource(id = R.string.select_pair),
         style = TextStyle(
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium
@@ -149,7 +146,7 @@ fun PairDropDownButton(
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterVertically),
-                text = "$pairNum пара",
+                text = "$pairNum ${stringResource(id = R.string.pair)}",
                 style = TextStyle(
                     fontSize = 16.sp,
                     color = PairSelectionTextColor
@@ -232,7 +229,7 @@ fun PairListElement(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(8.dp, 4.dp, 0.dp, 0.dp),
-            text = "${pair.ordinal + 1} пара",
+            text = "${pair.ordinal + 1} ${stringResource(id = R.string.pair)}",
             style = TextStyle(
                 fontSize = 18.sp,
                 color = Color.White

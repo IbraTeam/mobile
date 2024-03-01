@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +46,7 @@ fun RoomSelection(
     Text(
         modifier = Modifier
             .padding(24.dp, 24.dp, 24.dp, 0.dp),
-        text = "Выберите свободную аудиторию",
+        text = stringResource(id = R.string.choose_room),
         style = TextStyle(
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium
@@ -102,7 +103,7 @@ fun RoomElement(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(8.dp, 0.dp, 0.dp, 0.dp),
-            text = key.name,
+            text = if (key.name.length <= 5) key.name else key.name.slice(0..4),
             style = TextStyle(
                 fontSize = 14.sp
             )

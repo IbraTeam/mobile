@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +61,8 @@ fun RequestsList(
         LocalOverscrollConfiguration provides null
     ) {
         LazyColumn(
+            modifier = Modifier
+                .padding(0.dp, 0.dp, 0.dp, 78.dp),
             state = rememberLazyListState()
         ) {
             item{
@@ -299,7 +302,6 @@ fun EmptyPair(time: String) {
         )
         Time(time)
     }
-
 }
 
 // Надпись "Ваши заявки"
@@ -309,7 +311,7 @@ fun RequestsLabel()
     Text(
         modifier = Modifier
             .padding(24.dp, 10.dp, 0.dp, 16.dp),
-        text = "Ваши заявки",
+        text = stringResource(id = R.string.your_requests),
         style = TextStyle(
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold
