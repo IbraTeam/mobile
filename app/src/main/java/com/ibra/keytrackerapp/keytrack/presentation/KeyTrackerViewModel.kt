@@ -252,7 +252,10 @@ class KeyTrackerViewModel @Inject constructor(
     fun updateKeys() {
         viewModelScope.launch(Dispatchers.Default) {
             val token = getTokenIfNotExpired()
-            getKeys(token)
+            val newKeys = getKeys(token)
+            _uiState.update { currentState ->
+                currentState.copy(keys = newKeys)
+            }
         }
     }
 

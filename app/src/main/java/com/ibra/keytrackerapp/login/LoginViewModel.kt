@@ -110,14 +110,14 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onButtonPressed() {
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.Default) {
             try {
-                withTimeout(2000) {
+                withTimeout(5000) {
                     val user = _uiState.value.toUserLoginModel()
                     val response = loginUserUseCase.execute(user)
                     val token = response.body()?.token
-                    token?.let { tokenUseCase.setTokenToLocalStorage(it) }
-                    if (token != null) {
+                    if (response.isSuccessful && token != null) {
+                        tokenUseCase.setTokenToLocalStorage(token)
                         val result = profileUseCase.getProfile(token)
                         val profile = result.body()
                         if (result.isSuccessful && profile != null) {
