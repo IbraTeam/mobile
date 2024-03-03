@@ -53,7 +53,6 @@ fun SignInSignUpScreen(
         }
     }
 
-
     // Картинка сверху экрана
     Column(
         Modifier.background(Color.White)

@@ -1,8 +1,11 @@
 package com.ibra.keytrackerapp.key_requests.presentation
 
+import android.net.http.HttpException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.ibra.keytrackerapp.common.auth.domain.usecase.LogoutUserUseCase
+import com.ibra.keytrackerapp.common.navigation.Screen
 import com.ibra.keytrackerapp.common.profile.domain.model.Profile
 import com.ibra.keytrackerapp.common.profile.domain.usecase.ProfileUseCase
 import com.ibra.keytrackerapp.common.token.domain.usecase.TokenUseCase
@@ -16,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.http.HTTP
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -31,10 +35,15 @@ class RequestsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
+
+            try{
+                getProfile()
+            } catch (e: Exception) { }
+
             try {
                 _uiState.value = _uiState.value.copy(selectedDate = LocalDate.now())
+                _uiState.value = _uiState.value.copy(isLoggedOut = false)
                 selectWeek()
-                getProfile()
                 updateDayRequest()
             } catch (e: Exception) {
                 _uiState.update { currentState ->
@@ -81,6 +90,8 @@ class RequestsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val token = getTokenIfNotExpired()
             logoutUseCase.execute(token)
+            tokenUseCase.deleteTokenFromLocalStorage()
+            _uiState.value = _uiState.value.copy(isLoggedOut = true)
         }
     }
 
@@ -132,12 +143,26 @@ class RequestsViewModel @Inject constructor(
     // Обновление списка заявок
     private suspend fun updateDayRequest() {
         _uiState.update { currentState ->
-            currentState.copy(
-                userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]),
-                dayRequests = keyRequestUseCase.getDayRequests(
-                    _uiState.value.selectedDate, _uiState.value.userRequests
+            try {
+                currentState.copy(
+                    userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]),
+                    dayRequests = keyRequestUseCase.getDayRequests(
+                        _uiState.value.selectedDate, _uiState.value.userRequests
+                    )
                 )
-            )
+            }
+            catch (e : retrofit2.HttpException) {
+                val selectedWeek = _uiState.value.selectedWeek
+
+                currentState.copy(
+                    userRequests = UserRequests(
+                        requests = listOf(),
+                        weekStart = selectedWeek.first().toString(),
+                        weekEnd = selectedWeek.last().toString()
+                    ),
+                    dayRequests = mutableListOf()
+                )
+            }
         }
     }
 
@@ -160,6 +185,7 @@ class RequestsViewModel @Inject constructor(
 
 // Данные о состоянии экрана
 data class RequestUiState(
+    val isLoggedOut : Boolean = false,
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedWeek: MutableList<LocalDate> = mutableListOf(),
     val dayRequests: MutableList<KeyRequestDto> = mutableListOf(),

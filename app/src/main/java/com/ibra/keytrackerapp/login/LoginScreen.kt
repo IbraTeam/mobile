@@ -55,6 +55,8 @@ fun LoginScreen(
             navController.navigate(Screen.RequestsScreen.name) {
                 navController.popBackStack()
             }
+
+            viewModel.unpressButton()
         }
     }
 

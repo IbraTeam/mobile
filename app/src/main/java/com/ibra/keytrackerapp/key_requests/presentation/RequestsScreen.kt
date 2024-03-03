@@ -16,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -44,6 +45,11 @@ fun RequestsScreen(
     viewModel: RequestsViewModel = hiltViewModel()
 ) {
     val vmValues by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(vmValues.isLoggedOut) {
+        if (vmValues.isLoggedOut)
+            navController.navigate(Screen.SignInSignUpScreen.name)
+    }
 
     if (vmValues.userRequests != null){
         Scaffold(
@@ -96,7 +102,6 @@ fun Greeting(
                 .padding(0.dp, 30.dp, 0.dp, 0.dp)
                 .align(Alignment.TopEnd),
             onClick = {
-                navController.navigate(Screen.SignInSignUpScreen.name)
                 viewModel.logout()
             },
             colors = ButtonDefaults.buttonColors(

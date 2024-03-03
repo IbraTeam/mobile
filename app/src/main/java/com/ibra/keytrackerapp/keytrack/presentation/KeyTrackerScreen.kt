@@ -79,6 +79,7 @@ fun KeyTrackerScreen(
     LaunchedEffect(uiState.isLogout) {
         if (uiState.isLogout) {
             navController.navigate(Screen.SignInSignUpScreen.name)
+            viewModel.afterLogout()
         }
     }
 
@@ -114,8 +115,8 @@ fun KeyTrackerScreen(
                     textAlign = TextAlign.Start
                 )
                 ExitButton(onClick = {
-                    navController.navigate(Screen.SignInSignUpScreen.name)
                     viewModel.onExitButtonPressed()
+                    //navController.navigate(Screen.SignInSignUpScreen.name)
                 })
             }
             Text(text = stringResource(R.string.your_keys), style = semiBold16)

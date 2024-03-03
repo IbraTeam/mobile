@@ -35,7 +35,6 @@ class KeyTrackerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(KeyTrackerUiState())
     val uiState: StateFlow<KeyTrackerUiState> = _uiState.asStateFlow()
 
-
     init {
         initViewModel()
     }
@@ -45,6 +44,7 @@ class KeyTrackerViewModel @Inject constructor(
             try {
                 val token = tokenUseCase.getTokenFromLocalStorage()
                 val isTokenExpired = tokenUseCase.isTokenExpired(token)
+
                 if (!isTokenExpired) {
                     handleValidToken(token)
                 } else {
@@ -58,13 +58,14 @@ class KeyTrackerViewModel @Inject constructor(
         }
     }
 
-
     fun onExitButtonPressed() {
         viewModelScope.launch(Dispatchers.Default) {
             val token = tokenUseCase.getTokenFromLocalStorage()
             logoutUserUseCase.execute(token)
             tokenUseCase.deleteTokenFromLocalStorage()
             profileUseCase.deleteProfileFromLocalStorage()
+
+            _uiState.value = _uiState.value.copy(isLogout = true)
         }
     }
 
@@ -138,6 +139,12 @@ class KeyTrackerViewModel @Inject constructor(
                 people = personList,
                 pagination = pagination
             )
+        }
+    }
+
+    fun afterLogout() {
+        _uiState.update { currentState ->
+            currentState.copy(isLogout = false)
         }
     }
 

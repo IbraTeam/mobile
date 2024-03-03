@@ -101,6 +101,14 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun unpressButton() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                isButtonPressed = false
+            )
+        }
+    }
+
     fun onButtonPressed() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
