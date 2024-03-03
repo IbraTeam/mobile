@@ -101,7 +101,7 @@ class KeyTrackerViewModel @Inject constructor(
     fun onSecondButtonPressed(keyDto: KeyDto) {
         viewModelScope.launch(Dispatchers.Default) {
             val token = getTokenIfNotExpired()
-            val response = when (keyDto.transferStatus) {
+            when (keyDto.transferStatus) {
                 TransferStatus.ON_HANDS -> keyTrackUseCases.returnKey(token, keyDto.keyId)
                 TransferStatus.OFFERING_TO_YOU -> keyTrackUseCases.acceptKey(
                     token, keyDto.keyId
@@ -109,12 +109,9 @@ class KeyTrackerViewModel @Inject constructor(
                 TransferStatus.TRANSFERRING -> keyTrackUseCases.cancelKey(
                     token, keyDto.keyId
                 )
-
-                else -> null
+                else -> {}
             }
-            if (response?.isSuccessful == true) {
-                updateKeysList(token)
-            }
+            updateKeysList(token)
         }
     }
 
@@ -129,15 +126,14 @@ class KeyTrackerViewModel @Inject constructor(
     private suspend fun handleValidToken(token: String) {
         val profileResponse = profileUseCase.getProfile(token)
         val profile = profileResponse.body()
-        val keys = getKeys(token)
+        updateKeysList(token)
 
-        val peopleResponse = keyTrackUseCases.getPeople(token, 1, null)
+        val peopleResponse = keyTrackUseCases.getPeople(token, 0, null)
         val personList = peopleResponse.body()?.users ?: emptyList()
         val pagination = peopleResponse.body()?.page ?: PagePaginationDto()
         _uiState.update { currentState ->
             currentState.copy(
                 isLogout = false,
-                keys = keys,
                 personName = profile?.name ?: "",
                 people = personList,
                 pagination = pagination
@@ -234,7 +230,7 @@ class KeyTrackerViewModel @Inject constructor(
             }
             val token = getTokenIfNotExpired()
             val newPeople = keyTrackUseCases.getPeople(
-                token, 1, _uiState.value.personName
+                token, 0, _uiState.value.personName
             )
 
             _uiState.update { currentState ->
@@ -243,6 +239,12 @@ class KeyTrackerViewModel @Inject constructor(
                     pagination = newPeople.body()?.page ?: PagePaginationDto()
                 )
             }
+        }
+    }
+
+    fun updateKeys() {
+        viewModelScope.launch(Dispatchers.Default) {
+            updateKeys()
         }
     }
 

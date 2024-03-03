@@ -11,8 +11,13 @@ class CreateRequestUseCase(
     private val tokenUseCase: TokenUseCase
 ) {
     suspend fun getFreeKeys(date: String, pairNumber : Int, repeatedCount : Int) : List<FreeKey> {
-        val token = "Bearer ${tokenUseCase.getTokenFromLocalStorage()}"
-        return createRequestRepository.getFreeKeys(token, date, pairNumber, repeatedCount)
+        return try {
+            val token = "Bearer ${tokenUseCase.getTokenFromLocalStorage()}"
+            createRequestRepository.getFreeKeys(token, date, pairNumber, repeatedCount)
+        } catch (e: Exception){
+            emptyList()
+        }
+
     }
 
     suspend fun createRequest(request : CreateRequestDto) {

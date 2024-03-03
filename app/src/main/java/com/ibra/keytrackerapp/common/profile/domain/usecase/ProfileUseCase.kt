@@ -18,8 +18,7 @@ class ProfileUseCase @Inject constructor(
             if(result.isSuccessful){
                 val profile = result.body()
                 Response.success(profile)
-            }else{
-                Response.error(result.code(), result.errorBody()!!)
+            }else{ Response.error(result.code(), result.errorBody()!!)
             }
         }catch (e: Exception){
             Response.error(500, (e.message!! + e.stackTrace + "Error").toResponseBody())

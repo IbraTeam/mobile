@@ -72,6 +72,10 @@ fun KeyTrackerScreen(
         }
     }
 
+    LaunchedEffect(uiState){
+        viewModel.updateKeys()
+    }
+
     LaunchedEffect(uiState.isLogout) {
         if (uiState.isLogout) {
             navController.navigate(Screen.SignInSignUpScreen.name)
