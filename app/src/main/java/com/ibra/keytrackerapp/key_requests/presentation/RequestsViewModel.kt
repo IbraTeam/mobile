@@ -14,6 +14,7 @@ import com.ibra.keytrackerapp.key_requests.domain.model.UserRequests
 import com.ibra.keytrackerapp.key_requests.domain.use_case.KeyRequestUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -133,7 +134,7 @@ class RequestsViewModel @Inject constructor(
 
     // Выбор даты
     fun selectDate(date: LocalDate) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             _uiState.value = _uiState.value.copy(selectedDate = date)
             selectWeek()
             updateDayRequest()
@@ -148,7 +149,8 @@ class RequestsViewModel @Inject constructor(
                     userRequests = keyRequestUseCase.getUserRequests(_uiState.value.selectedWeek[0]),
                     dayRequests = keyRequestUseCase.getDayRequests(
                         _uiState.value.selectedDate, _uiState.value.userRequests
-                    )
+                    ),
+                    gotRequests = true
                 )
             }
             catch (e : retrofit2.HttpException) {
@@ -160,9 +162,11 @@ class RequestsViewModel @Inject constructor(
                         weekStart = selectedWeek.first().toString(),
                         weekEnd = selectedWeek.last().toString()
                     ),
-                    dayRequests = mutableListOf()
+                    dayRequests = mutableListOf(),
+                    gotRequests = false
                 )
             }
+
         }
     }
 
@@ -185,6 +189,7 @@ class RequestsViewModel @Inject constructor(
 
 // Данные о состоянии экрана
 data class RequestUiState(
+    val gotRequests : Boolean = false,
     val isLoggedOut : Boolean = false,
     val selectedDate: LocalDate = LocalDate.now(),
     val selectedWeek: MutableList<LocalDate> = mutableListOf(),

@@ -51,6 +51,12 @@ fun RequestsScreen(
             navController.navigate(Screen.SignInSignUpScreen.name)
     }
 
+    LaunchedEffect(vmValues) {
+        if (vmValues.gotRequests == true) {
+            viewModel.selectDate(vmValues.selectedDate)
+        }
+    }
+
     if (vmValues.userRequests != null){
         Scaffold(
             bottomBar = {
