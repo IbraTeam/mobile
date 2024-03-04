@@ -77,7 +77,9 @@ class KeyTrackerViewModel @Inject constructor(
                 TransferStatus.OFFERING_TO_YOU -> keyTrackUseCases.rejectKey(
                     token, keyDto.keyId
                 )
-
+                TransferStatus.TRANSFERRING -> keyTrackUseCases.cancelKey(
+                    token, keyDto.keyId
+                )
                 TransferStatus.IN_DEAN -> keyTrackUseCases.getKey(token, keyDto.keyId)
                 else -> {}
             }
